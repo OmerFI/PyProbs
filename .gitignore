@@ -2,3 +2,8 @@ build/
 dist/
 *.egg-info/
 __pycache__/
+
+# Sphinx documentation
+docs/_build/
+
+.vscode/
