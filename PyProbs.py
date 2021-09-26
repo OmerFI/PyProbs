@@ -6,7 +6,7 @@ __all__ = ['Probability']
 __version__ = '0.1'
 
 
-class Probability():
+class Probability(object):
     """
     The Probability class has useful functions that return True or False based on the given probability.
 
@@ -97,10 +97,10 @@ class Probability():
             raise ProbabilityRangeError(
                 "The probability of an event must be between 0 and 1.")
 
-    @staticmethod
-    def _float_probability(arg: float) -> bool:
+    @classmethod
+    def _float_probability(cls, arg: float) -> bool:
         if arg % 1 == 0:
-            if __class__._int_probability(arg):
+            if cls._int_probability(arg):
                 return True
             return False
         elif arg > 1 or arg < 0:
@@ -113,15 +113,15 @@ class Probability():
             return True
         return False
 
-    @staticmethod
-    def _str_probability(arg: str) -> bool:
+    @classmethod
+    def _str_probability(cls, arg: str) -> bool:
         if "%" in arg and "/" in arg:
             return NotImplemented  # can change later
 
         if "%" in arg:
             arg = arg.split("%")[1].\
                 strip() if arg[0] == "%" else arg.split("%")[0].strip()
-            return __class__._float_probability(int(arg.strip())/100)
+            return cls._float_probability(int(arg.strip())/100)
         elif "/" in arg:
             arg = arg.split("/")
             first_part = int(arg[0])
@@ -144,8 +144,8 @@ class Probability():
                 arg_as_list[idx] = t.strip()
             return '%'.join(arg_as_list)
 
-    @staticmethod
-    def Prob(*args, num: int = 1) -> Union[bool, Iterable[bool]]:
+    @classmethod
+    def Prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
         General decision function that returns True or False based on the given probability.
 
@@ -171,7 +171,7 @@ class Probability():
             >>> pr.Prob("25%", num=5)
             [False, False, True, False, False]
         """
-        __values = []
+        values = []
 
         if not args:
             raise NotGivenValueError("No value was given.")
@@ -182,30 +182,30 @@ class Probability():
         for arg in args:
             if isinstance(arg, int):
                 for _ in range(num):
-                    if __class__._int_probability(arg):
-                        __values.append(True)
+                    if cls._int_probability(arg):
+                        values.append(True)
                     else:
-                        __values.append(False)
+                        values.append(False)
             elif isinstance(arg, float):
                 for _ in range(num):
-                    if __class__._float_probability(arg):
-                        __values.append(True)
+                    if cls._float_probability(arg):
+                        values.append(True)
                     else:
-                        __values.append(False)
+                        values.append(False)
             elif isinstance(arg, str):
                 for _ in range(num):
-                    if __class__._str_probability(arg):
-                        __values.append(True)
+                    if cls._str_probability(arg):
+                        values.append(True)
                     else:
-                        __values.append(False)
+                        values.append(False)
             else:
                 raise ProbabilityTypeError(
                     "The type which you gave to Prob must be int, float, or str.")
 
-        if len(__values) > 1:
-            return __values
+        if len(values) > 1:
+            return values
         else:
-            return __values[0]
+            return values[0]
 
     def iProb(self, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
@@ -283,10 +283,10 @@ class Probability():
                     else:
                         _values.append(False)
             elif isinstance(arg, str):
-                arg = __class__._adjust_str(arg)
+                arg = self._adjust_str(arg)
                 args[idx] = arg
                 for _ in range(num):
-                    if __class__._str_probability(arg):
+                    if self._str_probability(arg):
                         _values.append(True)
                     else:
                         _values.append(False)
