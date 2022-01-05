@@ -59,8 +59,3 @@ Note: All of them require creating an instance except the Prob function.
 
 ### Documentation
 https://pyprobs.readthedocs.io/
-
----------------------------------
-### Any Bugs or Improvement Advice
-Please contact me.
-> omergumushane@hotmail.com
