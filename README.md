@@ -11,7 +11,7 @@ Examples
 ----------
 
 Simple Usage:
-```
+```py
 >>> from PyProbs import Probability as pr
 >>> # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
 >>> pr.Prob(50/100)
@@ -20,7 +20,7 @@ False
 [False, False, False, True, False]
 ```
 Suggested and More Advanced Usage:
-```
+```py
 >>> from PyProbs import Probability as pr
 >>> p = pr()
 >>> p.iProb('3/7', 0.25, num=2)
