@@ -3,7 +3,7 @@ from random import randint as _randint
 from typing import NoReturn, Union, Iterable, Dict
 
 __all__ = ['Probability']
-__version__ = '0.1'
+__version__ = '0.3'
 
 
 class Probability(object):

@@ -2,7 +2,7 @@
 
 PyProbs is a module that has useful functionality that returns True or False based on the given probability.
 
-[![Version](https://img.shields.io/badge/Version-v0.2-orange)]()
+[![Version](https://img.shields.io/badge/Version-v0.3-orange)]()
 [![Python](https://img.shields.io/badge/Python-v3.0%2B-blue)]()
 [![License](https://img.shields.io/badge/License-MIT-green)]()
 

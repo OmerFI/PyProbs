@@ -6,7 +6,7 @@ with open('README.md', 'r') as f:
     LONG_DESCRIPTION = f.read()
 
 NAME = 'pyprobs'
-VERSION = '0.2'
+VERSION = '0.3'
 DESCRIPTION = 'A module that returns True or False output based on given probability'
 LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
 URL = 'https://github.com/OmerFI/PyProbs'
