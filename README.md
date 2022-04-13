@@ -14,7 +14,7 @@ You can install it from [PyPI](https://pypi.org/project/pyprobs/) by running the
 pip install pyprobs
 ```
 
-Or you can manually execute the **setup.py** from source
+Or you can manually execute the **setup.py** from [source](https://github.com/OmerFI/PyProbs)
 
 ```
 python setup.py install
