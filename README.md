@@ -57,8 +57,8 @@ Suggested and More Advanced Usage:
 0.001
 ```
 
-Functions of The Probability Class
-----------
+## Functions of The Probability Class
+
 - Prob
 - iProb
 - set_constant
@@ -70,7 +70,8 @@ Note: All of them require creating an instance except the Prob function.
 
 ### Requirements
 
--   Python _v3.x_
+- Python _v3.x_
 
 ### Documentation
+
 https://pyprobs.readthedocs.io/
