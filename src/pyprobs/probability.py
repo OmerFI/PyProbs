@@ -9,14 +9,14 @@ class Probability(object):
 
     Functions
     ----------
-    - Prob
-    - iProb
+    - prob
+    - iprob
     - set_constant
     - get
     - clear
     - count_values
 
-    Note: All of them require creating an instance except the Prob function
+    Note: All of them require creating an instance except the prob function
 
     Examples
     ----------
@@ -24,16 +24,16 @@ class Probability(object):
     Simple Usage:
 
     >>> from PyProbs import Probability as pr
-    >>> pr.Prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
+    >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
     False
-    >>> pr.Prob(50/100, num=5)
+    >>> pr.prob(50/100, num=5)
     [False, False, False, True, False]
 
     Suggested and More Advanced Usage:
 
     >>> from PyProbs import Probability as pr
     >>> p = pr()
-    >>> p.iProb('3/7', 0.25, num=2)
+    >>> p.iprob('3/7', 0.25, num=2)
     [[True, True], [False, False]]
     >>> p.history
     {'3/7': [True, True], 0.25: [False, False]}
@@ -149,7 +149,7 @@ class Probability(object):
             return "%".join(arg_as_list)
 
     @classmethod
-    def Prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
+    def prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
         General decision function that returns True or False based on the given probability.
 
@@ -166,13 +166,13 @@ class Probability(object):
 
         Examples:
             >>> from PyProbs import Probability as pr
-            >>> pr.Prob(1/2)
+            >>> pr.prob(1/2)
             True
-            >>> pr.Prob(0.778)
+            >>> pr.prob(0.778)
             False
-            >>> pr.Prob("25%")
+            >>> pr.prob("25%")
             False
-            >>> pr.Prob("25%", num=5)
+            >>> pr.prob("25%", num=5)
             [False, False, True, False, False]
         """
         values = []
@@ -204,7 +204,7 @@ class Probability(object):
                         values.append(False)
             else:
                 raise exceptions.ProbabilityTypeError(
-                    "The type which you gave to Prob must be int, float, or str."
+                    "The type which you gave to prob must be int, float, or str."
                 )
 
         if len(values) > 1:
@@ -212,7 +212,7 @@ class Probability(object):
         else:
             return values[0]
 
-    def iProb(self, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
+    def iprob(self, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
         General decision function that returns True or False based on the given probability.
         This function can be only used when an instance was created from Probability.
@@ -231,15 +231,15 @@ class Probability(object):
         Examples:
             >>> from PyProbs import Probability as pr
             >>> p = pr()
-            >>> p.iProb(1/5)
+            >>> p.iprob(1/5)
             True
-            >>> p.iProb(3/5, 0.15, num=2)
+            >>> p.iprob(3/5, 0.15, num=2)
             [[True, True], [False, False]]
 
-            You can set a constant and use iProb by not giving any args:
+            You can set a constant and use iprob by not giving any args:
 
             >>> p.set_constant(0.5)  # You can also set a str constant, i.e "50%", "3/11". For more accurate results, give them as str.
-            >>> p.iProb()
+            >>> p.iprob()
             True
 
             You can see the history:
@@ -299,7 +299,7 @@ class Probability(object):
                         _values.append(False)
             else:
                 raise exceptions.ProbabilityTypeError(
-                    "The type which you gave to iProb must be int, float, or str."
+                    "The type which you gave to iprob must be int, float, or str."
                 )
 
             # constant was set, args were given.
@@ -343,8 +343,8 @@ class Probability(object):
         self, constant: Union[int, float, str], mutable: bool = True
     ) -> None:
         """
-        You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iProb.
-        But if you pass any arguments to iProb, the arguments will be accepted not the constant.
+        You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iprob.
+        But if you pass any arguments to iprob, the arguments will be accepted not the constant.
         After setting the constant, you can get the constant by using the 'get' function.
 
         Args:
@@ -399,7 +399,7 @@ class Probability(object):
 
         Raises:
             InvalidParameterValue: When the which parameter is not 'all' or 'last', this error raises.
-            NotUsedError: Unless you use iProb function (and if the which parameter is set to 'last'), this error raises.
+            NotUsedError: Unless you use iprob function (and if the which parameter is set to 'last'), this error raises.
 
         Returns:
             Dict[bool, int]: Returns a dict that contains True values in the key, and False values in the value.
@@ -434,7 +434,7 @@ class Probability(object):
                             _false_counter += 1
             except AttributeError:
                 raise exceptions.NotUsedError(
-                    "iProb function must be used at least 1 time before."
+                    "iprob function must be used at least 1 time before."
                 )
 
         return {True: _true_counter, False: _false_counter}
