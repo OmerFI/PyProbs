@@ -21,9 +21,12 @@ project = 'PyProbs'
 copyright = '2021, Ömer Furkan İşleyen'
 author = 'Ömer Furkan İşleyen'
 
+from pyprobs import __version__
+
 # The full version, including alpha/beta/rc tags
-from PyProbs import __version__
 release = __version__
+# The short X.Y version.
+version = '.'.join(release.split('.')[:2])
 
 
 # -- General configuration ---------------------------------------------------
