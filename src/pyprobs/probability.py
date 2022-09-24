@@ -1,9 +1,6 @@
 from random import randint as _randint
-
+from pyprobs import exceptions
 from typing import NoReturn, Union, Iterable, Dict
-
-__all__ = ['Probability']
-__version__ = '0.3'
 
 
 class Probability(object):
@@ -70,7 +67,7 @@ class Probability(object):
         if not isinstance(other, Probability):
             return NotImplemented
         if self._constant == "unset" or other._constant == "unset":
-            raise ConstantError("The objects' constants must be set before.")
+            raise exceptions.ConstantError("The objects' constants must be set before.")
         result = __class__()
         result_constant = self._constant + other._constant
         result_mutable = self._mutable | other._mutable
@@ -94,7 +91,7 @@ class Probability(object):
         elif arg == 0:
             return False
         else:
-            raise ProbabilityRangeError(
+            raise exceptions.ProbabilityRangeError(
                 "The probability of an event must be between 0 and 1.")
 
     @classmethod
@@ -104,7 +101,7 @@ class Probability(object):
                 return True
             return False
         elif arg > 1 or arg < 0:
-            raise ProbabilityRangeError(
+            raise exceptions.ProbabilityRangeError(
                 "The probability of an event must be between 0 and 1.")
 
         second_part = str(arg).split(".")[1]
@@ -174,10 +171,10 @@ class Probability(object):
         values = []
 
         if not args:
-            raise NotGivenValueError("No value was given.")
+            raise exceptions.NotGivenValueError("No value was given.")
 
         if num < 1:
-            raise NumError("The num parameter must be at least one.")
+            raise exceptions.NumError("The num parameter must be at least one.")
 
         for arg in args:
             if isinstance(arg, int):
@@ -199,7 +196,7 @@ class Probability(object):
                     else:
                         values.append(False)
             else:
-                raise ProbabilityTypeError(
+                raise exceptions.ProbabilityTypeError(
                     "The type which you gave to Prob must be int, float, or str.")
 
         if len(values) > 1:
@@ -252,7 +249,7 @@ class Probability(object):
         args = list(args)  # converting tuple to list
         if not args:
             if self._constant == "unset":
-                raise NotGivenValueError(
+                raise exceptions.NotGivenValueError(
                     "No value was given and no constant was set.")
             args = [self._constant]
             self._args = False
@@ -263,11 +260,11 @@ class Probability(object):
             if num % 1 == 0:
                 num = int(num)
             else:
-                raise NumError(
+                raise exceptions.NumError(
                     "The num parameter must be int and at least one")
 
         if num < 1:
-            raise NumError("The num parameter must be at least one.")
+            raise exceptions.NumError("The num parameter must be at least one.")
 
         for idx, arg in enumerate(args):
             if isinstance(arg, int):
@@ -291,7 +288,7 @@ class Probability(object):
                     else:
                         _values.append(False)
             else:
-                raise ProbabilityTypeError(
+                raise exceptions.ProbabilityTypeError(
                     "The type which you gave to iProb must be int, float, or str.")
 
             # constant was set, args were given.
@@ -347,16 +344,16 @@ class Probability(object):
 
         """
         if not isinstance(constant, (int, float, str)):
-            raise ConstantError(
+            raise exceptions.ConstantError(
                 "The constant parameter must be int, float or str.")
         else:
             if isinstance(constant, (int, float)):
                 if float(constant) < 0 or float(constant) > 1:
-                    raise ConstantError(
+                    raise exceptions.ConstantError(
                         "The constant parameter must be between 0 and 1.")
             else:
                 if ("%" not in constant) and ("/" not in constant):
-                    raise ConstantError(
+                    raise exceptions.ConstantError(
                         "If the constant parameter was set to str, it must contain '%' or '/'.")
 
         if self._mutable:
@@ -364,7 +361,7 @@ class Probability(object):
             if not mutable:
                 self._mutable = False
         else:
-            raise ImmutableConstantVariableError(
+            raise exceptions.ImmutableConstantVariableError(
                 "The mutable parameter has been set False before. You cannot set a constant again.")
 
     def clear(self) -> NoReturn:
@@ -391,7 +388,7 @@ class Probability(object):
             Dict[bool, int]: Returns a dict that contains True values in the key, and False values in the value.
         """
         if which not in ["all", "last"]:
-            raise InvalidParameterValue(
+            raise exceptions.InvalidParameterValue(
                 "The which parameter can be only 'all' or 'last'.")
         _true_counter = 0
         _false_counter = 0
@@ -416,7 +413,7 @@ class Probability(object):
                         else:
                             _false_counter += 1
             except AttributeError:
-                raise NotUsedError(
+                raise exceptions.NotUsedError(
                     "iProb function must be used at least 1 time before.")
 
         return {True: _true_counter, False: _false_counter}
@@ -448,41 +445,5 @@ class Probability(object):
         elif how == "mutable":
             return self._mutable
         else:
-            raise InvalidParameterValue(
+            raise exceptions.InvalidParameterValue(
                 "The how parameter can be only 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'.")
-
-
-class ProbabilityError(Exception):
-    pass
-
-
-class ProbabilityRangeError(ProbabilityError):
-    pass
-
-
-class ProbabilityTypeError(ProbabilityError):
-    pass
-
-
-class NumError(ProbabilityError):
-    pass
-
-
-class NotGivenValueError(ProbabilityError):
-    pass
-
-
-class NotUsedError(ProbabilityError):
-    pass
-
-
-class ImmutableConstantVariableError(ProbabilityError):
-    pass
-
-
-class ConstantError(ProbabilityError):
-    pass
-
-
-class InvalidParameterValue(ProbabilityError):
-    pass
