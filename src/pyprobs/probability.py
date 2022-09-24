@@ -23,7 +23,7 @@ class Probability(object):
 
     Simple Usage:
 
-    >>> from PyProbs import Probability as pr
+    >>> from pyprobs import Probability as pr
     >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
     False
     >>> pr.prob(50/100, num=5)
@@ -31,7 +31,7 @@ class Probability(object):
 
     Suggested and More Advanced Usage:
 
-    >>> from PyProbs import Probability as pr
+    >>> from pyprobs import Probability as pr
     >>> p = pr()
     >>> p.iprob('3/7', 0.25, num=2)
     [[True, True], [False, False]]
@@ -165,7 +165,7 @@ class Probability(object):
             Union[bool, Iterable[bool]]: If only one arg was given, returns a bool value. Otherwise, returns a list that contains bool values.
 
         Examples:
-            >>> from PyProbs import Probability as pr
+            >>> from pyprobs import Probability as pr
             >>> pr.prob(1/2)
             True
             >>> pr.prob(0.778)
@@ -229,7 +229,7 @@ class Probability(object):
             Union[bool, Iterable[bool]]: If only one arg was given, returns a bool value. Otherwise, returns a list that contains bool values.
 
         Examples:
-            >>> from PyProbs import Probability as pr
+            >>> from pyprobs import Probability as pr
             >>> p = pr()
             >>> p.iprob(1/5)
             True
