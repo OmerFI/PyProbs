@@ -23,6 +23,9 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+# Setuptools-scm
+src/pyprobs/_version.py
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
