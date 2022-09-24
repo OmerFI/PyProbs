@@ -1,6 +1,6 @@
 from random import randint as _randint
 from pyprobs import exceptions
-from typing import NoReturn, Union, Iterable, Dict
+from typing import Union, Iterable, Dict
 
 
 class Probability(object):
@@ -48,7 +48,7 @@ class Probability(object):
     0.001
     """
 
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         self._mutable = True
         self._constant = "unset"
         self._args = False
@@ -341,7 +341,7 @@ class Probability(object):
 
     def set_constant(
         self, constant: Union[int, float, str], mutable: bool = True
-    ) -> NoReturn:
+    ) -> None:
         """
         You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iProb.
         But if you pass any arguments to iProb, the arguments will be accepted not the constant.
@@ -381,7 +381,7 @@ class Probability(object):
                 "The mutable parameter has been set False before. You cannot set a constant again."
             )
 
-    def clear(self) -> NoReturn:
+    def clear(self) -> None:
         """
         Clears the instance's history.
 
