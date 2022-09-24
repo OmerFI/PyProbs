@@ -55,7 +55,9 @@ class Probability(object):
         self.history = {}
 
     def __str__(self) -> str:
-        return str(f"Probability(_constant='{self._constant}', _mutable={self._mutable})")
+        return str(
+            f"Probability(_constant='{self._constant}', _mutable={self._mutable})"
+        )
 
     def __float__(self) -> float:
         return float(self._constant)
@@ -92,7 +94,8 @@ class Probability(object):
             return False
         else:
             raise exceptions.ProbabilityRangeError(
-                "The probability of an event must be between 0 and 1.")
+                "The probability of an event must be between 0 and 1."
+            )
 
     @classmethod
     def _float_probability(cls, arg: float) -> bool:
@@ -102,7 +105,8 @@ class Probability(object):
             return False
         elif arg > 1 or arg < 0:
             raise exceptions.ProbabilityRangeError(
-                "The probability of an event must be between 0 and 1.")
+                "The probability of an event must be between 0 and 1."
+            )
 
         second_part = str(arg).split(".")[1]
         value = _randint(1, 10 ** len(second_part))
@@ -116,9 +120,12 @@ class Probability(object):
             return NotImplemented  # can change later
 
         if "%" in arg:
-            arg = arg.split("%")[1].\
-                strip() if arg[0] == "%" else arg.split("%")[0].strip()
-            return cls._float_probability(int(arg.strip())/100)
+            arg = (
+                arg.split("%")[1].strip()
+                if arg[0] == "%"
+                else arg.split("%")[0].strip()
+            )
+            return cls._float_probability(int(arg.strip()) / 100)
         elif "/" in arg:
             arg = arg.split("/")
             first_part = int(arg[0])
@@ -134,12 +141,12 @@ class Probability(object):
             arg_as_list = arg.strip().split("/")
             for idx, t in enumerate(arg_as_list):
                 arg_as_list[idx] = t.strip()
-            return '/'.join(arg_as_list)
+            return "/".join(arg_as_list)
         elif "%" in arg:
             arg_as_list = arg.strip().split("%")
             for idx, t in enumerate(arg_as_list):
                 arg_as_list[idx] = t.strip()
-            return '%'.join(arg_as_list)
+            return "%".join(arg_as_list)
 
     @classmethod
     def Prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
@@ -197,7 +204,8 @@ class Probability(object):
                         values.append(False)
             else:
                 raise exceptions.ProbabilityTypeError(
-                    "The type which you gave to Prob must be int, float, or str.")
+                    "The type which you gave to Prob must be int, float, or str."
+                )
 
         if len(values) > 1:
             return values
@@ -250,7 +258,8 @@ class Probability(object):
         if not args:
             if self._constant == "unset":
                 raise exceptions.NotGivenValueError(
-                    "No value was given and no constant was set.")
+                    "No value was given and no constant was set."
+                )
             args = [self._constant]
             self._args = False
         else:
@@ -261,7 +270,8 @@ class Probability(object):
                 num = int(num)
             else:
                 raise exceptions.NumError(
-                    "The num parameter must be int and at least one")
+                    "The num parameter must be int and at least one"
+                )
 
         if num < 1:
             raise exceptions.NumError("The num parameter must be at least one.")
@@ -289,7 +299,8 @@ class Probability(object):
                         _values.append(False)
             else:
                 raise exceptions.ProbabilityTypeError(
-                    "The type which you gave to iProb must be int, float, or str.")
+                    "The type which you gave to iProb must be int, float, or str."
+                )
 
             # constant was set, args were given.
             if self._constant != "unset" and self._args:
@@ -328,7 +339,9 @@ class Probability(object):
             self._last_values.append(__values)
             return __values
 
-    def set_constant(self, constant: Union[int, float, str], mutable: bool = True) -> NoReturn:
+    def set_constant(
+        self, constant: Union[int, float, str], mutable: bool = True
+    ) -> NoReturn:
         """
         You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iProb.
         But if you pass any arguments to iProb, the arguments will be accepted not the constant.
@@ -345,16 +358,19 @@ class Probability(object):
         """
         if not isinstance(constant, (int, float, str)):
             raise exceptions.ConstantError(
-                "The constant parameter must be int, float or str.")
+                "The constant parameter must be int, float or str."
+            )
         else:
             if isinstance(constant, (int, float)):
                 if float(constant) < 0 or float(constant) > 1:
                     raise exceptions.ConstantError(
-                        "The constant parameter must be between 0 and 1.")
+                        "The constant parameter must be between 0 and 1."
+                    )
             else:
                 if ("%" not in constant) and ("/" not in constant):
                     raise exceptions.ConstantError(
-                        "If the constant parameter was set to str, it must contain '%' or '/'.")
+                        "If the constant parameter was set to str, it must contain '%' or '/'."
+                    )
 
         if self._mutable:
             self._constant = constant
@@ -362,7 +378,8 @@ class Probability(object):
                 self._mutable = False
         else:
             raise exceptions.ImmutableConstantVariableError(
-                "The mutable parameter has been set False before. You cannot set a constant again.")
+                "The mutable parameter has been set False before. You cannot set a constant again."
+            )
 
     def clear(self) -> NoReturn:
         """
@@ -389,7 +406,8 @@ class Probability(object):
         """
         if which not in ["all", "last"]:
             raise exceptions.InvalidParameterValue(
-                "The which parameter can be only 'all' or 'last'.")
+                "The which parameter can be only 'all' or 'last'."
+            )
         _true_counter = 0
         _false_counter = 0
         if which == "all":
@@ -401,7 +419,9 @@ class Probability(object):
                         _false_counter += 1
         elif which == "last":
             try:
-                if len(self._last_values) == 1 and not isinstance(self._last_values[0], list):
+                if len(self._last_values) == 1 and not isinstance(
+                    self._last_values[0], list
+                ):
                     if self._last_values[0]:
                         _true_counter += 1
                     else:
@@ -414,11 +434,14 @@ class Probability(object):
                             _false_counter += 1
             except AttributeError:
                 raise exceptions.NotUsedError(
-                    "iProb function must be used at least 1 time before.")
+                    "iProb function must be used at least 1 time before."
+                )
 
         return {True: _true_counter, False: _false_counter}
 
-    def get(self, how: str = "constant&mutable") -> Union[Dict[str, Union[int, float, bool, str]], int, float, bool, str]:
+    def get(
+        self, how: str = "constant&mutable"
+    ) -> Union[Dict[str, Union[int, float, bool, str]], int, float, bool, str]:
         """
         You can get the constant and/or mutable by calling this function.
 
@@ -437,13 +460,14 @@ class Probability(object):
             - If you set the how parameter to 'mutable', returns only the mutable value.
         """
         if how == "constant&mutable":
-            return {'constant': self._constant, 'mutable': self._mutable}
+            return {"constant": self._constant, "mutable": self._mutable}
         elif how == "mutable&constant":
-            return {'mutable': self._mutable, 'constant': self._constant}
+            return {"mutable": self._mutable, "constant": self._constant}
         elif how == "constant":
             return self._constant
         elif how == "mutable":
             return self._mutable
         else:
             raise exceptions.InvalidParameterValue(
-                "The how parameter can be only 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'.")
+                "The how parameter can be only 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'."
+            )
