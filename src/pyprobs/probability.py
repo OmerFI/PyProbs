@@ -386,7 +386,7 @@ class Probability(object):
         Clears the instance's history.
 
         Basically does this:
-        >>> self.history.clear()
+        >>> <instance>.history.clear()
         """
         self.history.clear()
 
