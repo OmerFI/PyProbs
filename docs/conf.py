@@ -38,6 +38,7 @@ version = '.'.join(release.split('.')[:2])
 import sphinx_rtd_theme
 
 extensions = [
+    "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
 ]
@@ -57,7 +58,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 
-# html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,

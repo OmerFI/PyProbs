@@ -7,8 +7,8 @@ class Probability(object):
     """
     The Probability class has useful functions that return True or False based on the given probability.
 
-    Functions
-    ----------
+    Functions:
+
     - prob
     - iprob
     - set_constant
@@ -446,8 +446,7 @@ class Probability(object):
         You can get the constant and/or mutable by calling this function.
 
         Args:
-            how (str, optional): this parameter is how you get the values. Can be 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'.
-            Defaults to "constant&mutable".
+            how (str, optional): How you get the values. Can be 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'. Defaults to 'constant&mutable'.
 
         Raises:
             InvalidParameterValue: If the how parameter is not among 'constant&mutable', 'mutable&constant', 'constant' or 'mutable', this error raises.
