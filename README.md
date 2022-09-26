@@ -8,13 +8,13 @@ PyProbs is a module that has useful functionality that returns True or False bas
 
 ## Installation
 
-You can install it from [PyPI](https://pypi.org/project/pyprobs/) by running the following command
+You can install it from [PyPI](https://pypi.org/project/pyprobs/) by running the following command:
 
 ```
 pip install pyprobs
 ```
 
-Or you can manually execute the **setup.py** from [source](https://github.com/OmerFI/PyProbs)
+Or you can install it from [source](https://github.com/OmerFI/PyProbs):
 
 ```
 pip install .
