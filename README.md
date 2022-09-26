@@ -1,10 +1,12 @@
+[![PyPI](https://img.shields.io/pypi/v/pyprobs)](https://pypi.org/project/pyprobs/)
+[![Documentation Status](https://readthedocs.org/projects/pyprobs/badge/?version=latest)](https://pyprobs.readthedocs.io/en/latest/?badge=latest)
+[![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
+[![Python](https://img.shields.io/badge/Python-v3.6%2B-blue)]()
+[![License](https://img.shields.io/badge/License-MIT-green)]()
+
 # What is PyProbs?
 
 PyProbs is a module that has useful functionality that returns True or False based on the given probability.
-
-[![Version](https://img.shields.io/badge/Version-v0.3-orange)]()
-[![Python](https://img.shields.io/badge/Python-v3.6%2B-blue)]()
-[![License](https://img.shields.io/badge/License-MIT-green)]()
 
 ## Installation
 
