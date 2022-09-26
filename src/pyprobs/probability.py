@@ -1,5 +1,5 @@
 from random import randint as _randint
-from pyprobs import exceptions
+from . import exceptions
 from typing import Union, Iterable, Dict
 
 

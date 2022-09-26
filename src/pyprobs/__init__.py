@@ -1,5 +1,4 @@
-from pyprobs._version import __version__
-
-from pyprobs.probability import Probability
+from ._version import __version__
+from .probability import Probability
 
 __all__ = ["Probability"]
