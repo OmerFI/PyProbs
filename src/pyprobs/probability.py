@@ -1,42 +1,39 @@
 from random import randint as _randint
-
-from typing import NoReturn, Union, Iterable, Dict
-
-__all__ = ['Probability']
-__version__ = '0.3'
+from pyprobs import exceptions
+from typing import Union, Iterable, Dict
 
 
 class Probability(object):
     """
     The Probability class has useful functions that return True or False based on the given probability.
 
-    Functions
-    ----------
-    - Prob
-    - iProb
+    Functions:
+
+    - prob
+    - iprob
     - set_constant
     - get
     - clear
     - count_values
 
-    Note: All of them require creating an instance except the Prob function
+    Note: All of them require creating an instance except the prob function
 
     Examples
     ----------
 
     Simple Usage:
 
-    >>> from PyProbs import Probability as pr
-    >>> pr.Prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
+    >>> from pyprobs import Probability as pr
+    >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
     False
-    >>> pr.Prob(50/100, num=5)
+    >>> pr.prob(50/100, num=5)
     [False, False, False, True, False]
 
     Suggested and More Advanced Usage:
 
-    >>> from PyProbs import Probability as pr
+    >>> from pyprobs import Probability as pr
     >>> p = pr()
-    >>> p.iProb('3/7', 0.25, num=2)
+    >>> p.iprob('3/7', 0.25, num=2)
     [[True, True], [False, False]]
     >>> p.history
     {'3/7': [True, True], 0.25: [False, False]}
@@ -51,14 +48,16 @@ class Probability(object):
     0.001
     """
 
-    def __init__(self) -> NoReturn:
+    def __init__(self) -> None:
         self._mutable = True
         self._constant = "unset"
         self._args = False
         self.history = {}
 
     def __str__(self) -> str:
-        return str(f"Probability(_constant='{self._constant}', _mutable={self._mutable})")
+        return str(
+            f"Probability(_constant='{self._constant}', _mutable={self._mutable})"
+        )
 
     def __float__(self) -> float:
         return float(self._constant)
@@ -70,7 +69,7 @@ class Probability(object):
         if not isinstance(other, Probability):
             return NotImplemented
         if self._constant == "unset" or other._constant == "unset":
-            raise ConstantError("The objects' constants must be set before.")
+            raise exceptions.ConstantError("The objects' constants must be set before.")
         result = __class__()
         result_constant = self._constant + other._constant
         result_mutable = self._mutable | other._mutable
@@ -94,8 +93,9 @@ class Probability(object):
         elif arg == 0:
             return False
         else:
-            raise ProbabilityRangeError(
-                "The probability of an event must be between 0 and 1.")
+            raise exceptions.ProbabilityRangeError(
+                "The probability of an event must be between 0 and 1."
+            )
 
     @classmethod
     def _float_probability(cls, arg: float) -> bool:
@@ -104,8 +104,9 @@ class Probability(object):
                 return True
             return False
         elif arg > 1 or arg < 0:
-            raise ProbabilityRangeError(
-                "The probability of an event must be between 0 and 1.")
+            raise exceptions.ProbabilityRangeError(
+                "The probability of an event must be between 0 and 1."
+            )
 
         second_part = str(arg).split(".")[1]
         value = _randint(1, 10 ** len(second_part))
@@ -119,9 +120,12 @@ class Probability(object):
             return NotImplemented  # can change later
 
         if "%" in arg:
-            arg = arg.split("%")[1].\
-                strip() if arg[0] == "%" else arg.split("%")[0].strip()
-            return cls._float_probability(int(arg.strip())/100)
+            arg = (
+                arg.split("%")[1].strip()
+                if arg[0] == "%"
+                else arg.split("%")[0].strip()
+            )
+            return cls._float_probability(int(arg.strip()) / 100)
         elif "/" in arg:
             arg = arg.split("/")
             first_part = int(arg[0])
@@ -137,15 +141,15 @@ class Probability(object):
             arg_as_list = arg.strip().split("/")
             for idx, t in enumerate(arg_as_list):
                 arg_as_list[idx] = t.strip()
-            return '/'.join(arg_as_list)
+            return "/".join(arg_as_list)
         elif "%" in arg:
             arg_as_list = arg.strip().split("%")
             for idx, t in enumerate(arg_as_list):
                 arg_as_list[idx] = t.strip()
-            return '%'.join(arg_as_list)
+            return "%".join(arg_as_list)
 
     @classmethod
-    def Prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
+    def prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
         General decision function that returns True or False based on the given probability.
 
@@ -161,23 +165,23 @@ class Probability(object):
             Union[bool, Iterable[bool]]: If only one arg was given, returns a bool value. Otherwise, returns a list that contains bool values.
 
         Examples:
-            >>> from PyProbs import Probability as pr
-            >>> pr.Prob(1/2)
+            >>> from pyprobs import Probability as pr
+            >>> pr.prob(1/2)
             True
-            >>> pr.Prob(0.778)
+            >>> pr.prob(0.778)
             False
-            >>> pr.Prob("25%")
+            >>> pr.prob("25%")
             False
-            >>> pr.Prob("25%", num=5)
+            >>> pr.prob("25%", num=5)
             [False, False, True, False, False]
         """
         values = []
 
         if not args:
-            raise NotGivenValueError("No value was given.")
+            raise exceptions.NotGivenValueError("No value was given.")
 
         if num < 1:
-            raise NumError("The num parameter must be at least one.")
+            raise exceptions.NumError("The num parameter must be at least one.")
 
         for arg in args:
             if isinstance(arg, int):
@@ -199,15 +203,16 @@ class Probability(object):
                     else:
                         values.append(False)
             else:
-                raise ProbabilityTypeError(
-                    "The type which you gave to Prob must be int, float, or str.")
+                raise exceptions.ProbabilityTypeError(
+                    "The type which you gave to prob must be int, float, or str."
+                )
 
         if len(values) > 1:
             return values
         else:
             return values[0]
 
-    def iProb(self, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
+    def iprob(self, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
         """
         General decision function that returns True or False based on the given probability.
         This function can be only used when an instance was created from Probability.
@@ -224,17 +229,17 @@ class Probability(object):
             Union[bool, Iterable[bool]]: If only one arg was given, returns a bool value. Otherwise, returns a list that contains bool values.
 
         Examples:
-            >>> from PyProbs import Probability as pr
+            >>> from pyprobs import Probability as pr
             >>> p = pr()
-            >>> p.iProb(1/5)
+            >>> p.iprob(1/5)
             True
-            >>> p.iProb(3/5, 0.15, num=2)
+            >>> p.iprob(3/5, 0.15, num=2)
             [[True, True], [False, False]]
 
-            You can set a constant and use iProb by not giving any args:
+            You can set a constant and use iprob by not giving any args:
 
             >>> p.set_constant(0.5)  # You can also set a str constant, i.e "50%", "3/11". For more accurate results, give them as str.
-            >>> p.iProb()
+            >>> p.iprob()
             True
 
             You can see the history:
@@ -252,8 +257,9 @@ class Probability(object):
         args = list(args)  # converting tuple to list
         if not args:
             if self._constant == "unset":
-                raise NotGivenValueError(
-                    "No value was given and no constant was set.")
+                raise exceptions.NotGivenValueError(
+                    "No value was given and no constant was set."
+                )
             args = [self._constant]
             self._args = False
         else:
@@ -263,11 +269,12 @@ class Probability(object):
             if num % 1 == 0:
                 num = int(num)
             else:
-                raise NumError(
-                    "The num parameter must be int and at least one")
+                raise exceptions.NumError(
+                    "The num parameter must be int and at least one"
+                )
 
         if num < 1:
-            raise NumError("The num parameter must be at least one.")
+            raise exceptions.NumError("The num parameter must be at least one.")
 
         for idx, arg in enumerate(args):
             if isinstance(arg, int):
@@ -291,8 +298,9 @@ class Probability(object):
                     else:
                         _values.append(False)
             else:
-                raise ProbabilityTypeError(
-                    "The type which you gave to iProb must be int, float, or str.")
+                raise exceptions.ProbabilityTypeError(
+                    "The type which you gave to iprob must be int, float, or str."
+                )
 
             # constant was set, args were given.
             if self._constant != "unset" and self._args:
@@ -331,10 +339,12 @@ class Probability(object):
             self._last_values.append(__values)
             return __values
 
-    def set_constant(self, constant: Union[int, float, str], mutable: bool = True) -> NoReturn:
+    def set_constant(
+        self, constant: Union[int, float, str], mutable: bool = True
+    ) -> None:
         """
-        You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iProb.
-        But if you pass any arguments to iProb, the arguments will be accepted not the constant.
+        You can set an int, float, or str constant by calling this function. After setting a constant you don't need to pass any arguments to iprob.
+        But if you pass any arguments to iprob, the arguments will be accepted not the constant.
         After setting the constant, you can get the constant by using the 'get' function.
 
         Args:
@@ -347,27 +357,31 @@ class Probability(object):
 
         """
         if not isinstance(constant, (int, float, str)):
-            raise ConstantError(
-                "The constant parameter must be int, float or str.")
+            raise exceptions.ConstantError(
+                "The constant parameter must be int, float or str."
+            )
         else:
             if isinstance(constant, (int, float)):
                 if float(constant) < 0 or float(constant) > 1:
-                    raise ConstantError(
-                        "The constant parameter must be between 0 and 1.")
+                    raise exceptions.ConstantError(
+                        "The constant parameter must be between 0 and 1."
+                    )
             else:
                 if ("%" not in constant) and ("/" not in constant):
-                    raise ConstantError(
-                        "If the constant parameter was set to str, it must contain '%' or '/'.")
+                    raise exceptions.ConstantError(
+                        "If the constant parameter was set to str, it must contain '%' or '/'."
+                    )
 
         if self._mutable:
             self._constant = constant
             if not mutable:
                 self._mutable = False
         else:
-            raise ImmutableConstantVariableError(
-                "The mutable parameter has been set False before. You cannot set a constant again.")
+            raise exceptions.ImmutableConstantVariableError(
+                "The mutable parameter has been set False before. You cannot set a constant again."
+            )
 
-    def clear(self) -> NoReturn:
+    def clear(self) -> None:
         """
         Clears the instance's history.
 
@@ -385,14 +399,15 @@ class Probability(object):
 
         Raises:
             InvalidParameterValue: When the which parameter is not 'all' or 'last', this error raises.
-            NotUsedError: Unless you use iProb function (and if the which parameter is set to 'last'), this error raises.
+            NotUsedError: Unless you use iprob function (and if the which parameter is set to 'last'), this error raises.
 
         Returns:
             Dict[bool, int]: Returns a dict that contains True values in the key, and False values in the value.
         """
         if which not in ["all", "last"]:
-            raise InvalidParameterValue(
-                "The which parameter can be only 'all' or 'last'.")
+            raise exceptions.InvalidParameterValue(
+                "The which parameter can be only 'all' or 'last'."
+            )
         _true_counter = 0
         _false_counter = 0
         if which == "all":
@@ -404,7 +419,9 @@ class Probability(object):
                         _false_counter += 1
         elif which == "last":
             try:
-                if len(self._last_values) == 1 and not isinstance(self._last_values[0], list):
+                if len(self._last_values) == 1 and not isinstance(
+                    self._last_values[0], list
+                ):
                     if self._last_values[0]:
                         _true_counter += 1
                     else:
@@ -416,18 +433,20 @@ class Probability(object):
                         else:
                             _false_counter += 1
             except AttributeError:
-                raise NotUsedError(
-                    "iProb function must be used at least 1 time before.")
+                raise exceptions.NotUsedError(
+                    "iprob function must be used at least 1 time before."
+                )
 
         return {True: _true_counter, False: _false_counter}
 
-    def get(self, how: str = "constant&mutable") -> Union[Dict[str, Union[int, float, bool, str]], int, float, bool, str]:
+    def get(
+        self, how: str = "constant&mutable"
+    ) -> Union[Dict[str, Union[int, float, bool, str]], int, float, bool, str]:
         """
         You can get the constant and/or mutable by calling this function.
 
         Args:
-            how (str, optional): this parameter is how you get the values. Can be 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'.
-            Defaults to "constant&mutable".
+            how (str, optional): How you get the values. Can be 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'. Defaults to 'constant&mutable'.
 
         Raises:
             InvalidParameterValue: If the how parameter is not among 'constant&mutable', 'mutable&constant', 'constant' or 'mutable', this error raises.
@@ -440,49 +459,14 @@ class Probability(object):
             - If you set the how parameter to 'mutable', returns only the mutable value.
         """
         if how == "constant&mutable":
-            return {'constant': self._constant, 'mutable': self._mutable}
+            return {"constant": self._constant, "mutable": self._mutable}
         elif how == "mutable&constant":
-            return {'mutable': self._mutable, 'constant': self._constant}
+            return {"mutable": self._mutable, "constant": self._constant}
         elif how == "constant":
             return self._constant
         elif how == "mutable":
             return self._mutable
         else:
-            raise InvalidParameterValue(
-                "The how parameter can be only 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'.")
-
-
-class ProbabilityError(Exception):
-    pass
-
-
-class ProbabilityRangeError(ProbabilityError):
-    pass
-
-
-class ProbabilityTypeError(ProbabilityError):
-    pass
-
-
-class NumError(ProbabilityError):
-    pass
-
-
-class NotGivenValueError(ProbabilityError):
-    pass
-
-
-class NotUsedError(ProbabilityError):
-    pass
-
-
-class ImmutableConstantVariableError(ProbabilityError):
-    pass
-
-
-class ConstantError(ProbabilityError):
-    pass
-
-
-class InvalidParameterValue(ProbabilityError):
-    pass
+            raise exceptions.InvalidParameterValue(
+                "The how parameter can be only 'constant&mutable', 'mutable&constant', 'constant' or 'mutable'."
+            )

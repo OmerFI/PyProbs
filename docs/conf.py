@@ -21,9 +21,12 @@ project = 'PyProbs'
 copyright = '2021, Ömer Furkan İşleyen'
 author = 'Ömer Furkan İşleyen'
 
+from pyprobs import __version__
+
 # The full version, including alpha/beta/rc tags
-from PyProbs import __version__
 release = __version__
+# The short X.Y version.
+version = '.'.join(release.split('.')[:2])
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,6 +38,7 @@ release = __version__
 import sphinx_rtd_theme
 
 extensions = [
+    "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
     "sphinx.ext.autodoc",
 ]
@@ -54,7 +58,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 
-# html_theme = 'alabaster'
 html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
