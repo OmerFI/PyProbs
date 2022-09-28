@@ -1,6 +1,6 @@
 # What is PyProbs?
 
-PyProbs is a module that has useful functionality that returns True or False based on the given probability.
+PyProbs is a module that has useful functionality that returns True or False output based on the given probability.
 
 [![PyPI](https://img.shields.io/pypi/v/pyprobs)](https://pypi.org/project/pyprobs/)
 [![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
