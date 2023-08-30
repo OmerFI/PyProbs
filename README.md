@@ -7,7 +7,7 @@ PyProbs is a module that has useful functionality that returns True or False out
 [![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/pyprobs/badge/?version=latest)](https://pyprobs.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/License-MIT-green)]()
-[![Downloads](https://pepy.tech/badge/pyprobs)](https://pepy.tech/project/pyprobs/)
+[![Downloads](https://static.pepy.tech/badge/pyprobs)](https://pepy.tech/project/pyprobs)
 
 ## Installation
 
