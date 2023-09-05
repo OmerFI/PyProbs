@@ -50,7 +50,7 @@ class Probability(object):
 
     def __init__(self) -> None:
         self._mutable = True
-        self._constant = "unset"
+        self._constant: Union[int, float, str] = "unset"
         self._args = False
         self.history = {}
 
@@ -100,7 +100,7 @@ class Probability(object):
     @classmethod
     def _float_probability(cls, arg: float) -> bool:
         if arg % 1 == 0:
-            if cls._int_probability(arg):
+            if cls._int_probability(int(arg)):
                 return True
             return False
         elif arg > 1 or arg < 0:
@@ -117,7 +117,9 @@ class Probability(object):
     @classmethod
     def _str_probability(cls, arg: str) -> bool:
         if "%" in arg and "/" in arg:
-            return NotImplemented  # can change later
+            raise exceptions.ProbabilityTypeError(
+                "Given str value must contain '%' or '/'."
+            )
 
         if "%" in arg:
             arg = (
@@ -127,13 +129,16 @@ class Probability(object):
             )
             return cls._float_probability(int(arg.strip()) / 100)
         elif "/" in arg:
-            arg = arg.split("/")
-            first_part = int(arg[0])
-            second_part = int(arg[1])
+            splitted_arg = arg.split("/")
+            first_part = int(splitted_arg[0])
+            second_part = int(splitted_arg[1])
             value = _randint(1, second_part)
             if first_part >= value:
                 return True
             return False
+        raise exceptions.ProbabilityTypeError(
+            "Given str value must contain '%' or '/'."
+        )
 
     @staticmethod
     def _adjust_str(arg: str) -> str:
@@ -147,6 +152,7 @@ class Probability(object):
             for idx, t in enumerate(arg_as_list):
                 arg_as_list[idx] = t.strip()
             return "%".join(arg_as_list)
+        return arg
 
     @classmethod
     def prob(cls, *args, num: int = 1) -> Union[bool, Iterable[bool]]:
