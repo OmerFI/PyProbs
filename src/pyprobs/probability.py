@@ -190,6 +190,12 @@ class Probability(object):
             raise exceptions.NumError("The num parameter must be at least one.")
 
         for arg in args:
+            try:
+                if isinstance(arg, str):
+                    arg = float(arg)
+            except ValueError:
+                pass
+
             if isinstance(arg, int):
                 for _ in range(num):
                     if cls._int_probability(arg):
