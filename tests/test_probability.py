@@ -1,11 +1,11 @@
 import random
-from typing import Any
+from typing import Any, assert_type
 
 import pytest
 
 from pyprobs import Probability as pr
 from pyprobs import exceptions
-from pyprobs.probability import ProbabilityValue
+from pyprobs.probability import ConstantSettings, ProbabilityValue
 
 
 @pytest.mark.parametrize(
@@ -206,6 +206,17 @@ def test_set_constant_and_get() -> None:
 
     with pytest.raises(exceptions.InvalidParameterValue):
         p.get("other")
+
+
+def test_get_return_types() -> None:
+    p = pr()
+    how: str = "mutable"
+
+    assert_type(p.get(), ConstantSettings)
+    assert_type(p.get("mutable&constant"), ConstantSettings)
+    assert_type(p.get("constant"), ProbabilityValue)
+    assert_type(p.get("mutable"), bool)
+    assert_type(p.get(how), ConstantSettings | ProbabilityValue)
 
 
 @pytest.mark.parametrize("constant", [None, 1.5, "abc", "150%", "3/2"])
