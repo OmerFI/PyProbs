@@ -1,10 +1,10 @@
 version: 2
 
-# A single weekly pull request for all ecosystems, so that tools pinned in more than one place (ruff, uv) move together.
+# A single monthly pull request for all ecosystems, so that tools pinned in more than one place (ruff, uv) move together.
 multi-ecosystem-groups:
   dependencies:
     schedule:
-      interval: "weekly"
+      interval: "monthly"
 
 # Each ecosystem waits 7 days before taking a new release, so a broken or compromised one is usually caught by then.
 updates:
