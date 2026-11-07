@@ -1,37 +1,64 @@
 Examples
 ========
 
-Simple usage:
+Draw without setup
+------------------
 
-.. code-block:: python
+.. code-block:: pycon
 
     >>> from pyprobs import Probability as pr
-    >>> # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
-    >>> pr.prob(50/100)
-    False
-    >>> pr.prob(50/100, num=5)
-    [False, False, False, True, False]
+    >>> pr.prob(0.5)
+    True
+    >>> pr.prob("25%", num=5)
+    [False, False, True, False, False]
+    >>> pr.prob(1, 0)  # Several probabilities return one flat list
+    [True, False]
 
-Suggested and more advanced usage:
+Keep a history
+--------------
 
-.. code-block:: python
+.. code-block:: pycon
 
-    >>> from PyProbs import Probability as pr
     >>> p = pr()
-    >>> p.iProb('3/7', 0.25, num=2)
+    >>> p.iprob("3/7", 0.25, num=2)
     [[True, True], [False, False]]
-
     >>> p.history
     {'3/7': [True, True], 0.25: [False, False]}
-    >>> p.count_values('all')
+    >>> p.count_values("all")
     {True: 2, False: 2}
 
-    >>> p.set_constant(1/1000, mutable=True)  # If you set the mutable parameter to False, you won't be able to change the constant again.
+Set a constant
+--------------
 
-    >>> # You can get the constant and mutable value:
+When most of your calls use the same probability, set it once and call ``iprob()`` without arguments. Passing
+``mutable=False`` locks it, so a later ``set_constant()`` raises an error.
+
+.. code-block:: pycon
+
+    >>> p.set_constant("1/1000", mutable=False)
+    >>> p.iprob()
+    False
     >>> p.get()
-    {'constant': 0.001, 'mutable': True}
-    >>> # Also you can use it like "p.get(how='constant')" or "p.get(how='mutable')", this only returns the desired value.
+    {'constant': '1/1000', 'mutable': False}
 
-    >>> p._constant # You can more easily get the constant value.
-    0.001
+Supported notations
+-------------------
+
+.. list-table::
+   :header-rows: 1
+
+   * - Form
+     - Examples
+   * - int
+     - ``0``, ``1``
+   * - float
+     - ``0.25``, ``1e-05``
+   * - Percentage
+     - ``"25%"``, ``"%12.5"``
+   * - Fraction
+     - ``"1/4"``, ``" 3 / 7 "``
+   * - Number
+     - ``"0.25"``
+
+A value outside the 0–1 range raises ``ProbabilityRangeError``, and a str that cannot be read as a probability raises
+``ProbabilityTypeError``.

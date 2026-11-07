@@ -1,7 +1,71 @@
-[build-system]
-requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+[project]
+name = "pyprobs"
+dynamic = ["version"]
+description = "A module that returns True or False output based on given probability"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Ömer Furkan İşleyen", email = "omergumushane@hotmail.com" },
+]
+keywords = ["probability", "chance"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = []
 
-[tool.setuptools_scm]
-write_to = "src/pyprobs/_version.py"
-write_to_template = '__version__ = version = "{version}"'
+[project.urls]
+Source = "https://github.com/OmerFI/PyProbs"
+Documentation = "https://pyprobs.readthedocs.io"
+"Bug Tracker" = "https://github.com/OmerFI/PyProbs/issues"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.1",
+    "pre-commit>=4.7.0",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]
+docs = [
+    "sphinx>=9.1.1",
+    "sphinx-rtd-theme>=3.1.0",
+]
+
+[tool.uv.dependency-groups]
+# Sphinx 9 requires Python 3.12+ and the docs are only built on Read the Docs and CI.
+docs = { requires-python = ">=3.12" }
+
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+extend-select = [
+    "I", # "Isort"
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests"]
