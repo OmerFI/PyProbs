@@ -73,7 +73,7 @@ Note: All of them require creating an instance except the `prob` function.
 
 ### Requirements
 
-- Python _v3.6+_
+- Python _v3.11+_
 
 ### Documentation
 

@@ -16,9 +16,9 @@ Suggested and more advanced usage:
 
 .. code-block:: python
 
-    >>> from PyProbs import Probability as pr
+    >>> from pyprobs import Probability as pr
     >>> p = pr()
-    >>> p.iProb('3/7', 0.25, num=2)
+    >>> p.iprob('3/7', 0.25, num=2)
     [[True, True], [False, False]]
 
     >>> p.history

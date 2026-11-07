@@ -4,7 +4,7 @@ Installation
 You can install it from PyPI_::
 
     pip install pyprobs
- 
+
 Or you can install it from source_::
 
     pip install .
@@ -12,7 +12,7 @@ Or you can install it from source_::
 Requirements
 ~~~~~~~~~~~~
 
-* Python 3.6+
+* Python 3.11+
 
 .. _pypi: https://pypi.org/project/pyprobs
 .. _source: https://github.com/OmerFI/PyProbs
