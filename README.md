@@ -1,80 +1,127 @@
-# What is PyProbs?
+# PyProbs
 
-PyProbs is a module that has useful functionality that returns True or False output based on the given probability.
-
+[![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/pyprobs)](https://pypi.org/project/pyprobs/)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/pyprobs.svg?color=blueviolet)](https://pypi.org/project/pyprobs/)
-[![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
 [![Documentation Status](https://readthedocs.org/projects/pyprobs/badge/?version=latest)](https://pyprobs.readthedocs.io/en/latest/?badge=latest)
-[![License](https://img.shields.io/badge/License-MIT-green)]()
 [![Downloads](https://static.pepy.tech/badge/pyprobs)](https://pepy.tech/project/pyprobs)
+[![License](https://img.shields.io/github/license/OmerFI/PyProbs)](https://github.com/OmerFI/PyProbs/blob/main/LICENSE)
+
+Get `True` or `False` from a probability, whether you write it as a float, a percentage or a fraction.
+
+**Documentation**: [https://pyprobs.readthedocs.io](https://pyprobs.readthedocs.io)
+
+**Source Code**: [https://github.com/OmerFI/PyProbs](https://github.com/OmerFI/PyProbs)
+
+---
+
+PyProbs turns a probability into a decision. Ask for `"25%"` and roughly one call in four returns `True`. You can draw
+once, draw many times in a single call, or keep an instance around that remembers every result and counts them for you.
+
+The key features are:
+
+- **Any notation**: `0.25`, `"25%"`, `"1/4"` and `"0.25"` all mean the same probability.
+- **Quick or tracked**: `Probability.prob()` draws without any setup, while an instance's `iprob()` records a history
+  you can count.
+- **Typed**: Ships with type hints and is checked with mypy in strict mode.
+- **No dependencies**: Pure Python, nothing else to install.
 
 ## Installation
 
-You can install it from [PyPI](https://pypi.org/project/pyprobs/) by running the following command:
+PyProbs supports Python 3.11+.
 
-```
-pip install pyprobs
-```
+First, [install `uv`](https://docs.astral.sh/uv/getting-started/installation/), and then add PyProbs to your project:
 
-Or you can install it from [source](https://github.com/OmerFI/PyProbs):
-
-```
-pip install .
+```console
+$ uv add pyprobs
 ```
 
-## Examples
+If you prefer to use `pip`, install it inside a virtual environment:
 
-Simple Usage:
+```console
+$ pip install pyprobs
+```
 
-```py
+## Example
+
+### Draw without setup
+
+```pycon
 >>> from pyprobs import Probability as pr
->>> # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
->>> pr.prob(50/100)
-False
->>> pr.prob(50/100, num=5)
-[False, False, False, True, False]
+>>> pr.prob(0.5)
+True
+>>> pr.prob("25%", num=5)
+[False, False, True, False, False]
+>>> pr.prob(1, 0)  # Several probabilities return one flat list
+[True, False]
 ```
 
-Suggested and More Advanced Usage:
+### Keep a history
 
-```py
->>> from pyprobs import Probability as pr
+```pycon
 >>> p = pr()
->>> p.iprob('3/7', 0.25, num=2)
+>>> p.iprob("3/7", 0.25, num=2)
 [[True, True], [False, False]]
-
 >>> p.history
 {'3/7': [True, True], 0.25: [False, False]}
->>> p.count_values('all')
+>>> p.count_values("all")
 {True: 2, False: 2}
-
->>> p.set_constant(1/1000, mutable=True)  # If you set the mutable parameter to False, you won't be able to change the constant again.
-
->>> # You can get the constant and mutable value:
->>> p.get()
-{'constant': 0.001, 'mutable': True}
->>> # Also you can use it like "p.get(how='constant')" or "p.get(how='mutable')", this only returns the desired value.
-
->>> p._constant # You can more easily get the constant value.
-0.001
 ```
 
-## Functions of The Probability Class
+### Set a constant
 
-- prob
-- iprob
-- set_constant
-- get
-- clear
-- count_values
+When most of your calls use the same probability, set it once and call `iprob()` without arguments. Passing
+`mutable=False` locks it, so a later `set_constant()` raises an error.
 
-Note: All of them require creating an instance except the `prob` function.
+```pycon
+>>> p.set_constant("1/1000", mutable=False)
+>>> p.iprob()
+False
+>>> p.get()
+{'constant': '1/1000', 'mutable': False}
+```
 
-### Requirements
+## Supported notations
 
-- Python _v3.11+_
+| Form       | Examples                 |
+|------------|--------------------------|
+| int        | `0`, `1`                 |
+| float      | `0.25`, `1e-05`          |
+| Percentage | `"25%"`, `"%12.5"`       |
+| Fraction   | `"1/4"`, `" 3 / 7 "`     |
+| Number     | `"0.25"`                 |
 
-### Documentation
+A value outside the 0–1 range raises `ProbabilityRangeError`, and a str that cannot be read as a probability raises
+`ProbabilityTypeError`.
 
-https://pyprobs.readthedocs.io/
+## API
+
+All methods live on the `Probability` class. `prob()` can be called on the class itself, the rest need an instance.
+
+| Method                                  | What it does                                                                |
+|-----------------------------------------|-----------------------------------------------------------------------------|
+| `prob(*args, num=1)`                    | Draws `num` results for each probability.                                   |
+| `iprob(*args, num=1)`                   | Same as `prob()`, but records the results in `history` and uses the constant when no args are given. |
+| `set_constant(constant, mutable=True)`  | Sets the probability `iprob()` uses when called without args.               |
+| `get(how="constant&mutable")`           | Returns the constant, the mutable flag or both.                             |
+| `count_values(which="last")`            | Counts `True` and `False` results of the last `iprob()` call, or of the whole history with `"all"`. |
+| `clear()`                               | Empties the history.                                                        |
+
+See the [API documentation](https://pyprobs.readthedocs.io/en/latest/src/api-documentation.html) for details.
+
+## Contributing
+
+The project uses [uv](https://docs.astral.sh/uv/) for development. After cloning the repository, install the
+dependencies and the pre-commit hooks, then run the tests:
+
+```console
+$ uv sync
+$ uv run pre-commit install
+$ uv run pytest
+```
+
+Pre-commit runs ruff on every commit. Type checking is run separately with `uv run mypy`.
+
+## License
+
+This project is licensed under the terms of the [MIT license](https://github.com/OmerFI/PyProbs/blob/main/LICENSE).
