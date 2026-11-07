@@ -1,0 +1,30 @@
+version: 2
+
+# A single weekly pull request for all ecosystems, so that tools pinned in more than one place (ruff, uv) move together.
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: "weekly"
+
+# Each ecosystem waits 7 days before taking a new release, so a broken or compromised one is usually caught by then.
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    patterns: ["*"]
+    multi-ecosystem-group: "dependencies"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "uv"
+    directory: "/"
+    patterns: ["*"]
+    multi-ecosystem-group: "dependencies"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    patterns: ["*"]
+    multi-ecosystem-group: "dependencies"
+    cooldown:
+      default-days: 7
