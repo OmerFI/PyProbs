@@ -10,6 +10,14 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Must match the trusted publisher configured on PyPI.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyprobs
+    permissions:
+      contents: read
+      # Lets uv exchange the GitHub OIDC token for a short-lived PyPI upload token.
+      id-token: write
 
     steps:
       - uses: actions/checkout@v7
@@ -21,6 +29,4 @@ jobs:
       - name: Build package
         run: uv build
       - name: Publish to PyPI
-        run: uv publish
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv publish --trusted-publishing always
