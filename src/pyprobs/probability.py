@@ -1,10 +1,18 @@
 import random
+from typing import Literal, TypedDict, overload
 
 from . import exceptions
 
 ProbabilityValue = int | float | str
 
 UNSET_CONSTANT = "unset"
+
+
+class ConstantSettings(TypedDict):
+    """The constant and mutable values returned by ``Probability.get()``."""
+
+    constant: ProbabilityValue
+    mutable: bool
 
 
 def _to_probability(value: ProbabilityValue) -> float:
@@ -376,7 +384,20 @@ class Probability:
             False: len(values) - true_count,
         }
 
-    def get(self, how: str = "constant&mutable") -> dict[str, int | float | str | bool] | int | float | str | bool:
+    @overload
+    def get(self, how: Literal["constant&mutable", "mutable&constant"] = ...) -> ConstantSettings: ...
+
+    @overload
+    def get(self, how: Literal["constant"]) -> ProbabilityValue: ...
+
+    @overload
+    def get(self, how: Literal["mutable"]) -> bool: ...
+
+    # Fallback for a str variable whose value is only known at runtime.
+    @overload
+    def get(self, how: str) -> ConstantSettings | ProbabilityValue: ...
+
+    def get(self, how: str = "constant&mutable") -> ConstantSettings | ProbabilityValue:
         """
         You can get the constant and/or mutable by calling this function.
 
@@ -389,11 +410,9 @@ class Probability:
                 or 'mutable', this error raises.
 
         Returns:
-            dict[str, int | float | str | bool] | int | float | str | bool:
-            - If you set the how parameter to 'constant&mutable', returns a dict that contains the constant in the key
-              and mutable in the value.
-            - If you set the how parameter to 'mutable&constant', returns a dict that contains the mutable in the key
-              and constant in the value.
+            ConstantSettings | int | float | str | bool:
+            - If you set the how parameter to 'constant&mutable', returns a dict with the 'constant' and 'mutable' keys.
+            - If you set the how parameter to 'mutable&constant', returns the same dict with the 'mutable' key first.
             - If you set the how parameter to 'constant', returns only the constant value.
             - If you set the how parameter to 'mutable', returns only the mutable value.
         """
