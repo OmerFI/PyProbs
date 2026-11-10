@@ -12,7 +12,7 @@ hide:
 float, a percentage or a fraction.</p>
 
 [Get started](src/installation.md){ .md-button .md-button--primary }
-[API Reference](src/api-documentation.md){ .md-button }
+[User Guide](src/user-guide.md){ .md-button }
 
 </div>
 
@@ -55,11 +55,11 @@ once, draw many times in a single call, or keep an instance around that remember
 
 ```pycon
 >>> from pyprobs import Probability as pr
->>> pr.prob("25%", num=5)
-[False, False, True, False, False]
+>>> pr.prob("50%", num=5)
+[False, False, True, True, False]
 >>> p = pr()
->>> p.iprob("3/7", 0.25, num=2)
-[[True, True], [False, False]]
+>>> p.iprob("3/4", 0.5, num=2)
+[[True, False], [True, True]]
 >>> p.count_values("all")
-{True: 2, False: 2}
+{True: 3, False: 1}
 ```

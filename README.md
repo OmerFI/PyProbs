@@ -49,9 +49,9 @@ $ pip install pyprobs
 ```pycon
 >>> from pyprobs import Probability as pr
 >>> pr.prob(0.5)
-True
->>> pr.prob("25%", num=5)
-[False, False, True, False, False]
+False
+>>> pr.prob("50%", num=5)
+[False, True, True, False, True]
 >>> pr.prob(1, 0)  # Several probabilities return one flat list
 [True, False]
 ```
@@ -60,10 +60,10 @@ True
 
 ```pycon
 >>> p = pr()
->>> p.iprob("3/7", 0.25, num=2)
+>>> p.iprob("3/4", 0.5, num=2)
 [[True, True], [False, False]]
 >>> p.history
-{'3/7': [True, True], 0.25: [False, False]}
+{'3/4': [True, True], 0.5: [False, False]}
 >>> p.count_values("all")
 {True: 2, False: 2}
 ```
@@ -107,7 +107,8 @@ All methods live on the `Probability` class. `prob()` can be called on the class
 | `count_values(which="last")`            | Counts `True` and `False` results of the last `iprob()` call, or of the whole history with `"all"`. |
 | `clear()`                               | Empties the history.                                                        |
 
-See the [API documentation](https://omerfi.github.io/PyProbs/src/api-documentation.html) for details.
+The [User Guide](https://omerfi.github.io/PyProbs/src/user-guide.html) walks through all of them, and the
+[API Reference](https://omerfi.github.io/PyProbs/src/api-documentation.html) lists every parameter and exception.
 
 ## Contributing
 
@@ -121,6 +122,9 @@ $ uv run pytest
 ```
 
 Pre-commit runs ruff on every commit. Type checking is run separately with `uv run mypy`.
+
+The tests also run every example in this README and in the docs, so their outputs stay true. To preview the docs
+while you edit them, run `uv run --group docs zensical serve` and open http://localhost:8000.
 
 ## License
 

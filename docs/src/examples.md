@@ -1,51 +1,86 @@
 # Examples
 
-## Draw without setup
+Short recipes for things people use PyProbs for. Each one assumes this import:
 
 ```pycon
 >>> from pyprobs import Probability as pr
->>> pr.prob(0.5)
-True
->>> pr.prob("25%", num=5)
-[False, False, True, False, False]
->>> pr.prob(1, 0)  # Several probabilities return one flat list
-[True, False]
 ```
 
-## Keep a history
+## Loot drops in a game
+
+Check the rarest reward first. Because the checks run in order, the ring below has a 30% chance only when the sword
+did not drop:
 
 ```pycon
->>> p = pr()
->>> p.iprob("3/7", 0.25, num=2)
-[[True, True], [False, False]]
->>> p.history
-{'3/7': [True, True], 0.25: [False, False]}
->>> p.count_values("all")
-{True: 2, False: 2}
+>>> def open_chest():
+...     if pr.prob("5%"):
+...         return "legendary sword"
+...     if pr.prob("30%"):
+...         return "silver ring"
+...     return "gold coins"
+>>> for _ in range(5):
+...     print(open_chest())
+gold coins
+silver ring
+gold coins
+gold coins
+gold coins
 ```
 
-## Set a constant
+## Checking a probability by simulation
 
-When most of your calls use the same probability, set it once and call `iprob()` without arguments. Passing
-`mutable=False` locks it, so a later `set_constant()` raises an error.
+Draw many outcomes and look at the share that came out `True`. `sum()` counts the `True` values, so the share gets
+closer to the probability as the number of draws grows:
 
 ```pycon
->>> p.set_constant("1/1000", mutable=False)
->>> p.iprob()
-False
->>> p.get()
-{'constant': '1/1000', 'mutable': False}
+>>> outcomes = pr.prob("1/3", num=100_000)
+>>> sum(outcomes) / len(outcomes)
+0.33453
 ```
 
-## Supported notations
+## Sampling a fraction of items
 
-| Form       | Examples             |
-|------------|----------------------|
-| int        | `0`, `1`             |
-| float      | `0.25`, `1e-05`      |
-| Percentage | `"25%"`, `"%12.5"`   |
-| Fraction   | `"1/4"`, `" 3 / 7 "` |
-| Number     | `"0.25"`             |
+Keep roughly one item in ten, for example to log the details of a sample of requests:
 
-A value outside the 0–1 range raises `ProbabilityRangeError`, and a str that cannot be read as a probability raises
-`ProbabilityTypeError`.
+```pycon
+>>> sampled = []
+>>> for request_id in range(1, 31):
+...     if pr.prob("10%"):
+...         sampled.append(request_id)
+>>> sampled
+[19, 20]
+```
+
+## Free throws with a fixed success rate
+
+An instance with a constant remembers the rate, and its history keeps the score. Ten throws are few, so the count
+can stray quite far from 72%:
+
+```pycon
+>>> player = pr()
+>>> player.set_constant("72%")
+>>> player.iprob(num=10)
+[False, True, True, False, True, True, False, True, False, False]
+>>> player.count_values()
+{True: 5, False: 5}
+>>> player.iprob(num=10)
+[True, True, False, False, False, True, True, True, False, True]
+>>> player.count_values("all")
+{True: 11, False: 9}
+```
+
+## Stable outcomes in tests
+
+Seed the `random` module before each test, and every run draws the same outcomes. With pytest, an autouse fixture
+does it for all tests in a module:
+
+```python
+import random
+
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def seed_random():
+    random.seed(1234)
+```
