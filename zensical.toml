@@ -9,6 +9,7 @@ copyright = "Copyright &copy; 2021 Ömer Furkan İşleyen"
 # Keeps the page paths of the former Read the Docs site (src/installation.html), so its addresses redirect here
 # one to one.
 use_directory_urls = false
+extra_css = ["stylesheets/extra.css"]
 nav = [
     { "Home" = "index.md" },
     { "Installation" = "src/installation.md" },
@@ -18,6 +19,10 @@ nav = [
 ]
 
 [project.theme]
+variant = "classic"
+favicon = "assets/favicon.svg"
+font.text = "Inter"
+font.code = "JetBrains Mono"
 features = [
     "content.code.copy",
     "navigation.footer",
@@ -27,14 +32,21 @@ features = [
 [[project.theme.palette]]
 media = "(prefers-color-scheme: light)"
 scheme = "default"
+primary = "custom"
+accent = "custom"
 toggle.icon = "lucide/sun"
 toggle.name = "Switch to dark mode"
 
 [[project.theme.palette]]
 media = "(prefers-color-scheme: dark)"
 scheme = "slate"
+primary = "custom"
+accent = "custom"
 toggle.icon = "lucide/moon"
 toggle.name = "Switch to light mode"
+
+[project.theme.icon]
+logo = "lucide/dices"
 
 [project.plugins.mkdocstrings.handlers.python.options]
 docstring_style = "google"
