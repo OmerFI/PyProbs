@@ -4,12 +4,19 @@ from typing import Literal, TypedDict, overload
 from . import exceptions
 
 ProbabilityValue = int | float | str
+"""A probability written as an int (`0`, `1`), a float (`0.25`) or a str (`"25%"`, `"1/4"`, `"0.25"`)."""
 
 UNSET_CONSTANT = "unset"
 
 
 class ConstantSettings(TypedDict):
-    """The constant and mutable values returned by ``Probability.get()``."""
+    """
+    The constant and mutable values returned by `Probability.get()`.
+
+    Attributes:
+        constant: The constant as it was given to `set_constant()`, or `"unset"` when no constant is set.
+        mutable: Whether the constant can still be changed.
+    """
 
     constant: ProbabilityValue
     mutable: bool
@@ -102,45 +109,25 @@ def _draw(probability: float, num: int) -> list[bool]:
 
 class Probability:
     """
-    The Probability class has useful functions that return True or False based on the given probability.
+    Turn probabilities into `True` or `False` outcomes.
 
-    Functions:
+    `prob()` is a static method, so it can be called on the class itself without any setup. The other methods work on
+    an instance, which keeps a history of the outcomes it draws and can hold a constant probability.
 
-    - prob
-    - iprob
-    - set_constant
-    - get
-    - clear
-    - count_values
-
-    Note: All of them require creating an instance except the prob function
+    Attributes:
+        history: The outcomes drawn by `iprob()`, keyed by the probability they were drawn for.
 
     Examples:
-        Simple Usage:
-
         >>> from pyprobs import Probability as pr
-        >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
+        >>> pr.prob("25%")
         False
-        >>> pr.prob(50/100, num=5)
-        [False, False, False, True, False]
-
-        Suggested and More Advanced Usage:
-
-        >>> from pyprobs import Probability as pr
         >>> p = pr()
-        >>> p.iprob('3/7', 0.25, num=2)
-        [[True, True], [False, False]]
+        >>> p.iprob("3/7", 0.25, num=2)
+        [[False, True], [False, False]]
         >>> p.history
-        {'3/7': [True, True], 0.25: [False, False]}
-        >>> p.count_values('all')
-        {True: 2, False: 2}
-
-        >>> p.set_constant(1/1000, mutable=True)  # If you set the mutable parameter to False, you won't be able to change the constant again.
-
-        >>> p.get()  # You can get the constant and mutable value, also you can use it like "p.get(how='constant')" or "p.get(how='mutable')", this only returns the desired value.
-        {'constant': 0.001, 'mutable': True}
-        >>> p._constant # You can more easily get the constant value.
-        0.001
+        {'3/7': [False, True], 0.25: [False, False]}
+        >>> p.count_values("all")
+        {True: 1, False: 3}
     """
 
     def __init__(self) -> None:
@@ -181,33 +168,33 @@ class Probability:
     @staticmethod
     def prob(*args: ProbabilityValue, num: int = 1) -> bool | list[bool]:
         """
-        General decision function that returns True or False based on the given probability.
+        Draw `True` or `False` outcomes for one or more probabilities.
+
+        Each outcome is `True` with the given probability, so `"25%"` gives `True` about one time in four. A
+        probability of `0` always gives `False` and `1` always gives `True`.
 
         Args:
-            *args: Probabilities given as int (`1`, `0`), float (`0.25`, `1e-05`) or str (`'25%'`, `'%12.5'`,
-                `'1/4'`, `'0.25'`).
-            num (int, optional): The number of how many times the function will run. Defaults to 1.
+            *args: The probabilities to draw for, written as an int (`0`, `1`), a float (`0.25`, `1e-05`) or a str
+                (`"25%"`, `"%12.5"`, `"1/4"`, `"0.25"`).
+            num: How many outcomes to draw for each probability.
 
         Raises:
-            NotGivenValueError: When no value was given
-            NumError: When the num parameter was less than one
-            ProbabilityTypeError: When the type of the given values are not among int, float, or str
-            ProbabilityRangeError: When a given value is not between 0 and 1
+            NotGivenValueError: When no probability is given.
+            NumError: When `num` is less than one or not a whole number.
+            ProbabilityTypeError: When a probability is not an int, float or str, or a str cannot be read as one.
+            ProbabilityRangeError: When a probability is not between 0 and 1.
 
         Returns:
-            bool | list[bool]: If only one arg was given and num is 1, returns a bool value. Otherwise, returns a
-            flat list that contains bool values.
+            A bool when a single probability is drawn once, otherwise a flat list of every outcome in order.
 
         Examples:
             >>> from pyprobs import Probability as pr
-            >>> pr.prob(1/2)
-            True
-            >>> pr.prob(0.778)
-            False
-            >>> pr.prob("25%")
+            >>> pr.prob(0.5)
             False
             >>> pr.prob("25%", num=5)
-            [False, False, True, False, False]
+            [False, False, False, False, False]
+            >>> pr.prob(1, 0, num=2)
+            [True, True, False, False]
         """
         if not args:
             raise exceptions.NotGivenValueError("No value was given.")
@@ -229,49 +216,40 @@ class Probability:
 
     def iprob(self, *args: ProbabilityValue, num: int = 1) -> bool | list[bool] | list[list[bool]]:
         """
-        General decision function that returns True or False based on the given probability.
+        Draw outcomes like `prob()` and record them in the instance's history.
 
-        This function can be only used when an instance was created from Probability. Every outcome is also stored in
-        the instance's history, under the probability it was drawn for.
+        Each outcome is stored in `history` under the probability it was drawn for. When no probability is given, the
+        constant set with `set_constant()` is used.
 
         Args:
-            *args: Probabilities given as int (`1`, `0`), float (`0.25`, `1e-05`) or str (`'25%'`, `'%12.5'`,
-                `'1/4'`, `'0.25'`). If no args are given, the constant set with set_constant is used.
-            num (int, optional): The number of how many times the function will run. Defaults to 1.
+            *args: The probabilities to draw for, in any of the forms that `prob()` accepts.
+            num: How many outcomes to draw for each probability.
 
         Raises:
-            NotGivenValueError: When no value was given and no constant was set
-            NumError: When the num parameter was less than one and not int
-            ProbabilityTypeError: When the type of the given values are not among int, float, or str
-            ProbabilityRangeError: When a given value is not between 0 and 1
+            NotGivenValueError: When no probability is given and no constant is set.
+            NumError: When `num` is less than one or not a whole number.
+            ProbabilityTypeError: When a probability is not an int, float or str, or a str cannot be read as one.
+            ProbabilityRangeError: When a probability is not between 0 and 1.
 
         Returns:
-            bool | list[bool] | list[list[bool]]: If only one arg was given, returns a bool value when num is 1
-            and a list of bool values otherwise. If more than one arg was given, returns one list per arg.
+            For a single probability, a bool when `num` is 1 and a list of bools otherwise. For several
+            probabilities, one list of outcomes per probability.
 
         Examples:
             >>> from pyprobs import Probability as pr
             >>> p = pr()
-            >>> p.iprob(1/5)
-            True
-            >>> p.iprob(3/5, 0.15, num=2)
-            [[True, True], [False, False]]
-
-            You can set a constant and use iprob by not giving any args:
-
-            >>> p.set_constant(0.5)  # You can also set a str constant, i.e "50%", "3/11".
-            >>> p.iprob()
-            True
-
-            You can see the history:
-
+            >>> p.iprob(0.2)
+            False
+            >>> p.iprob("60%", 0.15, num=2)
+            [[False, True], [False, False]]
             >>> p.history
-            {0.2: [False], 0.6: [False, True], 0.15: [False, True], 0.5: [True]}
+            {0.2: [False], '60%': [False, True], 0.15: [False, False]}
 
-            You can count the values in the history:
-            >>> p.count_values(which="all")  # the which parameter defaults to "last" and counts the last call's values
-            {True: 1, False: 5}
+            Without arguments, `iprob()` draws with the constant:
 
+            >>> p.set_constant(0.5)
+            >>> p.iprob(num=3)
+            [True, False, True]
         """
         if args:
             values = list(args)
@@ -309,22 +287,25 @@ class Probability:
 
     def set_constant(self, constant: ProbabilityValue, mutable: bool = True) -> None:
         """
-        You can set an int, float, or str constant by calling this function.
+        Set the probability that `iprob()` draws with when it is called without arguments.
 
-        After setting a constant you don't need to pass any arguments to iprob. But if you pass any arguments to iprob,
-        the arguments will be accepted not the constant. After setting the constant, you can get the constant by using
-        the 'get' function.
+        Probabilities passed to `iprob()` still take precedence over the constant. With `mutable=False` the constant is
+        locked, and any later call to this method raises `ImmutableConstantVariableError`.
 
         Args:
-            constant (int | float | str): The constant value, can be int, float, or str
-            mutable (bool, optional): If you set this False, you won't be allowed to change the instance's constant.
-                Defaults to True.
+            constant: The probability, in any of the forms that `prob()` accepts.
+            mutable: Whether the constant can be changed again later.
 
         Raises:
-            ConstantError: When the constant is not an int, float or str probability between 0 and 1.
-            ImmutableConstantVariableError: If the mutable was set to False, when you call this function again, this
-                error raises.
+            ConstantError: When the constant is not a valid probability between 0 and 1.
+            ImmutableConstantVariableError: When the constant was locked by an earlier call with `mutable=False`.
 
+        Examples:
+            >>> from pyprobs import Probability as pr
+            >>> p = pr()
+            >>> p.set_constant("1/1000", mutable=False)
+            >>> p.get()
+            {'constant': '1/1000', 'mutable': False}
         """
         try:
             _to_probability(constant)
@@ -341,27 +322,45 @@ class Probability:
 
     def clear(self) -> None:
         """
-        Clears the instance's history.
+        Remove every outcome from the history.
 
-        Basically does this: `instance.history.clear()`
+        Examples:
+            >>> from pyprobs import Probability as pr
+            >>> p = pr()
+            >>> p.iprob(1, num=2)
+            [True, True]
+            >>> p.clear()
+            >>> p.history
+            {}
         """
         self.history.clear()
 
     def count_values(self, which: str = "last") -> dict[bool, int]:
         """
-        Count the values in the instance's history.
+        Count the `True` and `False` outcomes drawn by `iprob()`.
 
         Args:
-            which (str, optional): What values you want. 'last' counts the values returned by the last iprob call and
-                'all' counts every value in the history. Defaults to 'last'.
+            which: `"last"` counts the outcomes of the most recent `iprob()` call, and `"all"` counts the whole
+                history.
 
         Raises:
-            InvalidParameterValue: When the which parameter is not 'all' or 'last', this error raises.
-            NotUsedError: Unless you use iprob function (and if the which parameter is set to 'last'), this error raises.
+            InvalidParameterValue: When `which` is not `"last"` or `"all"`.
+            NotUsedError: When `which` is `"last"` and `iprob()` has not been called yet.
 
         Returns:
-            dict[bool, int]: Returns a dict that contains the number of True values under the True key, and the number
-            of False values under the False key.
+            The number of `True` outcomes under the `True` key and of `False` outcomes under the `False` key.
+
+        Examples:
+            >>> from pyprobs import Probability as pr
+            >>> p = pr()
+            >>> p.iprob(1, 0, num=2)
+            [[True, True], [False, False]]
+            >>> p.iprob(1)
+            True
+            >>> p.count_values()
+            {True: 1, False: 0}
+            >>> p.count_values("all")
+            {True: 3, False: 2}
         """
         if which not in ["all", "last"]:
             raise exceptions.InvalidParameterValue("The which parameter can be only 'all' or 'last'.")
@@ -396,22 +395,29 @@ class Probability:
 
     def get(self, how: str = "constant&mutable") -> ConstantSettings | ProbabilityValue:
         """
-        You can get the constant and/or mutable by calling this function.
+        Return the constant, the mutable flag or both.
 
         Args:
-            how (str, optional): How you get the values. Can be 'constant&mutable', 'mutable&constant', 'constant' or
-                'mutable'. Defaults to 'constant&mutable'.
+            how: `"constant&mutable"` and `"mutable&constant"` return both values in a dict, with the keys in that
+                order. `"constant"` and `"mutable"` return only that value.
 
         Raises:
-            InvalidParameterValue: If the how parameter is not among 'constant&mutable', 'mutable&constant', 'constant'
-                or 'mutable', this error raises.
+            InvalidParameterValue: When `how` is not one of the four values above.
 
         Returns:
-            ConstantSettings | int | float | str | bool:
-            - If you set the how parameter to 'constant&mutable', returns a dict with the 'constant' and 'mutable' keys.
-            - If you set the how parameter to 'mutable&constant', returns the same dict with the 'mutable' key first.
-            - If you set the how parameter to 'constant', returns only the constant value.
-            - If you set the how parameter to 'mutable', returns only the mutable value.
+            A `ConstantSettings` dict, the constant or the mutable flag, depending on `how`. The constant is
+            `"unset"` until `set_constant()` is called.
+
+        Examples:
+            >>> from pyprobs import Probability as pr
+            >>> p = pr()
+            >>> p.set_constant("25%")
+            >>> p.get()
+            {'constant': '25%', 'mutable': True}
+            >>> p.get("constant")
+            '25%'
+            >>> p.get("mutable")
+            True
         """
         if how == "constant&mutable":
             return {"constant": self._constant, "mutable": self._mutable}
