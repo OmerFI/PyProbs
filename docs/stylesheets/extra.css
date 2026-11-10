@@ -1,0 +1,114 @@
+/* Brand colors: a teal to violet gradient used across the header, headings and buttons. */
+:root {
+  --pyprobs-teal: #0d9488;
+  --pyprobs-violet: #7c3aed;
+  --pyprobs-gradient: linear-gradient(120deg, var(--pyprobs-teal), var(--pyprobs-violet));
+}
+
+:root > * {
+  --md-primary-fg-color: #6d28d9;
+  --md-primary-fg-color--light: #8b5cf6;
+  --md-primary-fg-color--dark: #5b21b6;
+  --md-accent-fg-color: #0d9488;
+  --md-typeset-a-color: #6d28d9;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-hue: 255;
+  --md-primary-fg-color: #a78bfa;
+  --md-primary-fg-color--light: #c4b5fd;
+  --md-primary-fg-color--dark: #8b5cf6;
+  --md-typeset-a-color: #a78bfa;
+  --md-accent-fg-color: #2dd4bf;
+}
+
+.md-header,
+.md-tabs {
+  background: var(--pyprobs-gradient);
+}
+
+/* Lucide icons are drawn with strokes, so the logo must not be filled. */
+.md-header__button.md-logo svg,
+.md-nav__title .md-nav__button.md-logo svg {
+  fill: none;
+  stroke: currentcolor;
+}
+
+/* Headings */
+/* The heading is only as wide as its text, so the gradient spans the words instead of the whole line. */
+.md-typeset h1 {
+  width: fit-content;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--pyprobs-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The gradient would also paint the hidden permalink sign, and a page title does not need one. */
+.md-typeset h1 .headerlink {
+  display: none;
+}
+
+.md-typeset h2,
+.md-typeset h3 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Buttons */
+.md-typeset .md-button {
+  border-radius: 999px;
+}
+
+.md-typeset .md-button--primary {
+  background: var(--pyprobs-gradient);
+  border: none;
+  color: #fff;
+}
+
+.md-typeset .md-button--primary:hover {
+  filter: brightness(1.1);
+  color: #fff;
+}
+
+/* Home page */
+.pyprobs-hero {
+  padding: 1.5rem 0 1rem;
+  text-align: center;
+}
+
+.pyprobs-hero h1 {
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 3.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.pyprobs-hero .pyprobs-tagline {
+  font-size: 1.15rem;
+  color: var(--md-default-fg-color--light);
+  max-width: 34rem;
+  margin: 0 auto 1.4rem;
+}
+
+@media screen and (min-width: 45em) {
+  .md-typeset .grid.pyprobs-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.6rem;
+  transition: border-color 150ms, transform 150ms;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--md-primary-fg-color--light);
+  transform: translateY(-2px);
+}
+
+.md-typeset .grid.cards .lucide {
+  color: var(--md-primary-fg-color--light);
+}
