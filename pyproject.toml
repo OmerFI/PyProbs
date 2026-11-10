@@ -30,7 +30,7 @@ dependencies = []
 
 [project.urls]
 Source = "https://github.com/OmerFI/PyProbs"
-Documentation = "https://pyprobs.readthedocs.io"
+Documentation = "https://omerfi.github.io/PyProbs/"
 "Bug Tracker" = "https://github.com/OmerFI/PyProbs/issues"
 
 [dependency-groups]
