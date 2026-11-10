@@ -22,6 +22,28 @@
   --md-accent-fg-color: #2dd4bf;
 }
 
+/*
+ * The theme enlarges the root font size on wide screens (125%, then 137.5% and 150%), which makes every page read
+ * large on a desktop monitor. Each step is one notch smaller here, while phones keep the default size.
+ */
+@media screen and (min-width: 60em) {
+  html {
+    font-size: 112.5%;
+  }
+}
+
+@media screen and (min-width: 100em) {
+  html {
+    font-size: 125%;
+  }
+}
+
+@media screen and (min-width: 125em) {
+  html {
+    font-size: 137.5%;
+  }
+}
+
 .md-header,
 .md-tabs {
   background: var(--pyprobs-gradient);
