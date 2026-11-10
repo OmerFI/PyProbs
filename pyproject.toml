@@ -41,13 +41,9 @@ dev = [
     "ruff>=0.17.4",
 ]
 docs = [
-    "sphinx>=9.1.1",
-    "sphinx-rtd-theme>=3.1.0",
+    "mkdocstrings-python>=2.0.10",
+    "zensical>=0.1.0",
 ]
-
-[tool.uv.dependency-groups]
-# Sphinx 9 requires Python 3.12+ and the docs are only built on Read the Docs and CI.
-docs = { requires-python = ">=3.12" }
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

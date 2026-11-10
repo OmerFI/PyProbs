@@ -115,34 +115,32 @@ class Probability:
 
     Note: All of them require creating an instance except the prob function
 
-    Examples
-    ----------
+    Examples:
+        Simple Usage:
 
-    Simple Usage:
+        >>> from pyprobs import Probability as pr
+        >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
+        False
+        >>> pr.prob(50/100, num=5)
+        [False, False, False, True, False]
 
-    >>> from pyprobs import Probability as pr
-    >>> pr.prob(50/100)  # You can pass float (i.e. 0.5, 0.157), int (i.e. 1, 0) or str (i.e. '50%', '3/11')
-    False
-    >>> pr.prob(50/100, num=5)
-    [False, False, False, True, False]
+        Suggested and More Advanced Usage:
 
-    Suggested and More Advanced Usage:
+        >>> from pyprobs import Probability as pr
+        >>> p = pr()
+        >>> p.iprob('3/7', 0.25, num=2)
+        [[True, True], [False, False]]
+        >>> p.history
+        {'3/7': [True, True], 0.25: [False, False]}
+        >>> p.count_values('all')
+        {True: 2, False: 2}
 
-    >>> from pyprobs import Probability as pr
-    >>> p = pr()
-    >>> p.iprob('3/7', 0.25, num=2)
-    [[True, True], [False, False]]
-    >>> p.history
-    {'3/7': [True, True], 0.25: [False, False]}
-    >>> p.count_values('all')
-    {True: 2, False: 2}
+        >>> p.set_constant(1/1000, mutable=True)  # If you set the mutable parameter to False, you won't be able to change the constant again.
 
-    >>> p.set_constant(1/1000, mutable=True)  # If you set the mutable parameter to False, you won't be able to change the constant again.
-
-    >>> p.get()  # You can get the constant and mutable value, also you can use it like "p.get(how='constant')" or "p.get(how='mutable')", this only returns the desired value.
-    {'constant': 0.001, 'mutable': True}
-    >>> p._constant # You can more easily get the constant value.
-    0.001
+        >>> p.get()  # You can get the constant and mutable value, also you can use it like "p.get(how='constant')" or "p.get(how='mutable')", this only returns the desired value.
+        {'constant': 0.001, 'mutable': True}
+        >>> p._constant # You can more easily get the constant value.
+        0.001
     """
 
     def __init__(self) -> None:
@@ -186,7 +184,8 @@ class Probability:
         General decision function that returns True or False based on the given probability.
 
         Args:
-            *args: Probabilities given as int (1, 0), float (0.25, 1e-05) or str ('25%', '%12.5', '1/4', '0.25').
+            *args: Probabilities given as int (`1`, `0`), float (`0.25`, `1e-05`) or str (`'25%'`, `'%12.5'`,
+                `'1/4'`, `'0.25'`).
             num (int, optional): The number of how many times the function will run. Defaults to 1.
 
         Raises:
@@ -236,8 +235,8 @@ class Probability:
         the instance's history, under the probability it was drawn for.
 
         Args:
-            *args: Probabilities given as int (1, 0), float (0.25, 1e-05) or str ('25%', '%12.5', '1/4', '0.25'). If
-                no args are given, the constant set with set_constant is used.
+            *args: Probabilities given as int (`1`, `0`), float (`0.25`, `1e-05`) or str (`'25%'`, `'%12.5'`,
+                `'1/4'`, `'0.25'`). If no args are given, the constant set with set_constant is used.
             num (int, optional): The number of how many times the function will run. Defaults to 1.
 
         Raises:
@@ -344,9 +343,7 @@ class Probability:
         """
         Clears the instance's history.
 
-        Basically does this:
-
-        >>> <instance>.history.clear()
+        Basically does this: `instance.history.clear()`
         """
         self.history.clear()
 
