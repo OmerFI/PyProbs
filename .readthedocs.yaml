@@ -13,6 +13,10 @@ build:
       - uv venv "${READTHEDOCS_VIRTUALENV_PATH}"
     install:
       - UV_PROJECT_ENVIRONMENT="${READTHEDOCS_VIRTUALENV_PATH}" uv sync --frozen --no-dev --group docs
-
-sphinx:
-  configuration: docs/conf.py
+    build:
+      html:
+        - '"${READTHEDOCS_VIRTUALENV_PATH}/bin/zensical" build --strict'
+    post_build:
+      # Read the Docs publishes the site from this directory.
+      - mkdir -p "${READTHEDOCS_OUTPUT}/html/"
+      - cp --recursive site/* "${READTHEDOCS_OUTPUT}/html/"

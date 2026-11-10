@@ -43,4 +43,4 @@ jobs:
           # Same Python as .readthedocs.yaml
           python-version: "3.12"
       - name: Build docs
-        run: uv run --locked --group docs sphinx-build docs docs/_build -b html
+        run: uv run --locked --group docs zensical build --strict
