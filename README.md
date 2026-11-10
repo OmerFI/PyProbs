@@ -3,13 +3,13 @@
 [![Tests](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml/badge.svg)](https://github.com/OmerFI/PyProbs/actions/workflows/tests.yml)
 [![PyPI](https://img.shields.io/pypi/v/pyprobs)](https://pypi.org/project/pyprobs/)
 [![Supported Python Versions](https://img.shields.io/pypi/pyversions/pyprobs.svg?color=blueviolet)](https://pypi.org/project/pyprobs/)
-[![Documentation Status](https://readthedocs.org/projects/pyprobs/badge/?version=latest)](https://pyprobs.readthedocs.io/en/latest/?badge=latest)
+[![Docs](https://github.com/OmerFI/PyProbs/actions/workflows/docs.yml/badge.svg)](https://omerfi.github.io/PyProbs/)
 [![Downloads](https://static.pepy.tech/badge/pyprobs)](https://pepy.tech/project/pyprobs)
 [![License](https://img.shields.io/github/license/OmerFI/PyProbs)](https://github.com/OmerFI/PyProbs/blob/main/LICENSE)
 
 Get `True` or `False` from a probability, whether you write it as a float, a percentage or a fraction.
 
-**Documentation**: [https://pyprobs.readthedocs.io](https://pyprobs.readthedocs.io)
+**Documentation**: [https://omerfi.github.io/PyProbs](https://omerfi.github.io/PyProbs/)
 
 **Source Code**: [https://github.com/OmerFI/PyProbs](https://github.com/OmerFI/PyProbs)
 
@@ -107,7 +107,7 @@ All methods live on the `Probability` class. `prob()` can be called on the class
 | `count_values(which="last")`            | Counts `True` and `False` results of the last `iprob()` call, or of the whole history with `"all"`. |
 | `clear()`                               | Empties the history.                                                        |
 
-See the [API documentation](https://pyprobs.readthedocs.io/en/latest/src/api-documentation.html) for details.
+See the [API documentation](https://omerfi.github.io/PyProbs/src/api-documentation.html) for details.
 
 ## Contributing
 

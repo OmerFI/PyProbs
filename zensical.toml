@@ -2,11 +2,12 @@
 site_name = "PyProbs"
 site_description = "Get True or False from a probability, whether you write it as a float, a percentage or a fraction."
 site_author = "Ömer Furkan İşleyen"
-site_url = "https://pyprobs.readthedocs.io/en/latest/"
+site_url = "https://omerfi.github.io/PyProbs/"
 repo_url = "https://github.com/OmerFI/PyProbs"
 repo_name = "OmerFI/PyProbs"
 copyright = "Copyright &copy; 2021 Ömer Furkan İşleyen"
-# Keeps the page addresses of the former Sphinx docs (src/installation.html), so existing links keep working.
+# Keeps the page paths of the former Read the Docs site (src/installation.html), so its addresses redirect here
+# one to one.
 use_directory_urls = false
 nav = [
     { "Home" = "index.md" },
