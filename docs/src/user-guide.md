@@ -1,3 +1,7 @@
+---
+icon: lucide/book-open
+---
+
 # User Guide
 
 PyProbs answers one question: given a probability, did the event happen? This guide walks through the ways to ask

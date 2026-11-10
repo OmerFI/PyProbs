@@ -1,60 +1,43 @@
-/* Brand colors: a teal to violet gradient used across the header, headings and buttons. */
-:root {
-  --pyprobs-teal: #0d9488;
-  --pyprobs-violet: #7c3aed;
-  --pyprobs-gradient: linear-gradient(120deg, var(--pyprobs-teal), var(--pyprobs-violet));
-}
-
+/*
+ * Brand colors, an evening sky from navy through royal purple and mauve to a touch of sunset orange. Light mode uses
+ * pastel tones for the halo and the glows, because the deep tones turn grey when blurred on white, and dark mode uses
+ * lighter tones for the titles, so they stay readable on the dark background.
+ */
 :root > * {
-  --md-primary-fg-color: #6d28d9;
-  --md-primary-fg-color--light: #8b5cf6;
-  --md-primary-fg-color--dark: #5b21b6;
-  --md-accent-fg-color: #0d9488;
-  --md-typeset-a-color: #6d28d9;
+  --pyprobs-gradient: linear-gradient(120deg, #2a3678, #4e3b94 45%, #7b4396 78%, #d1583e);
+  --pyprobs-title-gradient: var(--pyprobs-gradient);
+  --pyprobs-halo-gradient: linear-gradient(120deg, #a9b2f2, #c4a8f2 45%, #e7aee0 78%, #f7bfa3);
+  --pyprobs-halo-opacity: 0.55;
+  --pyprobs-link: #553c9a;
+  --pyprobs-glow-start: rgb(169 178 242 / 35%);
+  --pyprobs-glow-end: rgb(231 174 224 / 28%);
 }
 
 [data-md-color-scheme="slate"] {
-  --md-hue: 255;
-  --md-primary-fg-color: #a78bfa;
-  --md-primary-fg-color--light: #c4b5fd;
-  --md-primary-fg-color--dark: #8b5cf6;
-  --md-typeset-a-color: #a78bfa;
-  --md-accent-fg-color: #2dd4bf;
+  --pyprobs-title-gradient: linear-gradient(120deg, #8592e6, #a28cf2 45%, #c792d8 78%, #f29a74);
+  --pyprobs-halo-gradient: var(--pyprobs-gradient);
+  --pyprobs-halo-opacity: 0.3;
+  --pyprobs-link: #b9a7f5;
+  --pyprobs-glow-start: rgb(60 62 140 / 32%);
+  --pyprobs-glow-end: rgb(123 67 150 / 22%);
 }
 
-.md-header,
-.md-tabs {
-  background: var(--pyprobs-gradient);
+:root > *,
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--pyprobs-link);
+  --md-primary-fg-color--light: var(--pyprobs-link);
+  --md-primary-fg-color--dark: var(--pyprobs-link);
+  --md-accent-fg-color: var(--pyprobs-link);
+  --md-accent-fg-color--transparent: color-mix(in srgb, var(--pyprobs-link) 12%, transparent);
+  --md-typeset-a-color: var(--pyprobs-link);
 }
 
-/* Lucide icons are drawn with strokes, so the logo must not be filled. */
-.md-header__button.md-logo svg,
-.md-nav__title .md-nav__button.md-logo svg {
-  fill: none;
-  stroke: currentcolor;
-}
-
-/* Headings */
-/* The heading is only as wide as its text, so the gradient spans the words instead of the whole line. */
-.md-typeset h1 {
-  width: fit-content;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  background: var(--pyprobs-gradient);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* The gradient would also paint the hidden permalink sign, and a page title does not need one. */
-.md-typeset h1 .headerlink {
-  display: none;
-}
-
-.md-typeset h2,
-.md-typeset h3 {
-  font-weight: 700;
-  letter-spacing: -0.01em;
+/* Soft glows in the brand colors behind the page, fixed in place, so the background does not look empty. */
+body {
+  background-image:
+    radial-gradient(48rem 36rem at 0% 0%, var(--pyprobs-glow-start), transparent 70%),
+    radial-gradient(48rem 36rem at 100% 100%, var(--pyprobs-glow-end), transparent 70%);
+  background-attachment: fixed;
 }
 
 /* Buttons */
@@ -75,15 +58,41 @@
 
 /* Home page */
 .pyprobs-hero {
+  position: relative;
+  isolation: isolate;
   padding: 1.5rem 0 1rem;
   text-align: center;
 }
 
-.pyprobs-hero h1 {
-  margin-left: auto;
-  margin-right: auto;
+/* A blurred, translucent halo in the brand gradient behind the title. */
+.pyprobs-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 18% auto;
+  height: 16rem;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--pyprobs-halo-gradient);
+  filter: blur(4rem);
+  opacity: var(--pyprobs-halo-opacity);
+}
+
+/* The title is only as wide as its text, so the gradient spans the words instead of the whole line. */
+.md-typeset .pyprobs-hero h1 {
+  width: fit-content;
+  margin: 0 auto 0.4rem;
   font-size: 3.2rem;
-  margin-bottom: 0.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--pyprobs-title-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The gradient would also paint the hidden permalink sign. */
+.md-typeset .pyprobs-hero h1 .headerlink {
+  display: none;
 }
 
 .pyprobs-hero .pyprobs-tagline {
@@ -100,8 +109,32 @@
 }
 
 .md-typeset .grid.cards > ul > li {
-  border-radius: 0.6rem;
-  transition: border-color 150ms, transform 150ms;
+  transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+}
+
+/* In light mode the feature cards are frosted glass with a soft violet shadow, so they stand out from the glows. */
+[data-md-color-scheme="default"] .md-typeset .pyprobs-features > ul > li {
+  background-color: rgb(255 255 255 / 65%);
+  border-color: rgb(85 60 154 / 12%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.6rem 1.6rem rgb(78 59 148 / 8%);
+  backdrop-filter: blur(0.4rem);
+}
+
+[data-md-color-scheme="default"] .md-typeset .pyprobs-features > ul > li:hover {
+  box-shadow: 0 1px 2px rgb(42 54 120 / 8%), 0 0.8rem 2rem rgb(78 59 148 / 16%);
+}
+
+/* The install command and the second button get the same frosted look in light mode. */
+[data-md-color-scheme="default"] .md-typeset .pyprobs-hero + .highlight code {
+  background-color: rgb(255 255 255 / 65%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.6rem 1.6rem rgb(78 59 148 / 8%);
+  backdrop-filter: blur(0.4rem);
+}
+
+[data-md-color-scheme="default"] .md-typeset .pyprobs-hero .md-button:not(.md-button--primary) {
+  color: var(--pyprobs-link);
+  background-color: rgb(255 255 255 / 70%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.4rem 1rem rgb(78 59 148 / 10%);
 }
 
 .md-typeset .grid.cards > ul > li:hover {
@@ -111,4 +144,49 @@
 
 .md-typeset .grid.cards .lucide {
   color: var(--md-primary-fg-color--light);
+}
+
+/* Header and page titles carry the gradient. */
+.md-header {
+  background: var(--pyprobs-gradient);
+  color: #fff;
+}
+
+.md-typeset h1 {
+  width: fit-content;
+  background: var(--pyprobs-title-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The gradient would also paint the hidden permalink sign, and a page title does not need one. */
+.md-typeset h1 .headerlink {
+  display: none;
+}
+
+/* The search button is styled for a light header, so it gets light text on a translucent background here. */
+.md-header .md-search__button,
+.md-header .md-search__button:focus,
+.md-header .md-search__button:hover {
+  color: #fff;
+}
+
+.md-header .md-search__button {
+  background-color: rgb(255 255 255 / 16%);
+}
+
+.md-header .md-search__button:focus,
+.md-header .md-search__button:hover {
+  background-color: rgb(255 255 255 / 26%);
+}
+
+.md-header .md-search__button::before {
+  background-color: #fff;
+}
+
+.md-header .md-search__button::after {
+  color: #fff;
+  background-color: rgb(255 255 255 / 18%);
+  border-color: transparent;
 }

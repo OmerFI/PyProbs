@@ -1,3 +1,7 @@
+---
+icon: lucide/braces
+---
+
 # API Reference
 
 Everything you need is on the `Probability` class:

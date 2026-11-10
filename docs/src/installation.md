@@ -1,3 +1,7 @@
+---
+icon: lucide/download
+---
+
 # Installation
 
 PyProbs supports Python 3.11 and newer, and has no dependencies.
