@@ -1,18 +1,25 @@
 /*
- * Brand colors, an evening sky from dusk blue through mauve to a red orange: the gradient for the header, titles and
- * main button, one link color per color scheme, and the two colors of the background glows.
+ * Brand colors, an evening sky from navy through royal purple and mauve to a touch of sunset orange. Light mode uses
+ * pastel tones for the halo and the glows, because the deep tones turn grey when blurred on white, and dark mode uses
+ * lighter tones for the titles, so they stay readable on the dark background.
  */
 :root > * {
-  --pyprobs-gradient: linear-gradient(120deg, #345995, #8c4f74 50%, #e4572e);
-  --pyprobs-link: #c2410c;
-  --pyprobs-glow-start: rgb(52 89 149 / 14%);
-  --pyprobs-glow-end: rgb(228 87 46 / 11%);
+  --pyprobs-gradient: linear-gradient(120deg, #2a3678, #4e3b94 45%, #7b4396 78%, #d1583e);
+  --pyprobs-title-gradient: var(--pyprobs-gradient);
+  --pyprobs-halo-gradient: linear-gradient(120deg, #a9b2f2, #c4a8f2 45%, #e7aee0 78%, #f7bfa3);
+  --pyprobs-halo-opacity: 0.55;
+  --pyprobs-link: #553c9a;
+  --pyprobs-glow-start: rgb(169 178 242 / 35%);
+  --pyprobs-glow-end: rgb(231 174 224 / 28%);
 }
 
 [data-md-color-scheme="slate"] {
-  --pyprobs-link: #fdba74;
-  --pyprobs-glow-start: rgb(52 89 149 / 30%);
-  --pyprobs-glow-end: rgb(228 87 46 / 16%);
+  --pyprobs-title-gradient: linear-gradient(120deg, #8592e6, #a28cf2 45%, #c792d8 78%, #f29a74);
+  --pyprobs-halo-gradient: var(--pyprobs-gradient);
+  --pyprobs-halo-opacity: 0.3;
+  --pyprobs-link: #b9a7f5;
+  --pyprobs-glow-start: rgb(60 62 140 / 32%);
+  --pyprobs-glow-end: rgb(123 67 150 / 22%);
 }
 
 :root > *,
@@ -65,13 +72,9 @@ body {
   height: 16rem;
   z-index: -1;
   border-radius: 50%;
-  background: var(--pyprobs-gradient);
+  background: var(--pyprobs-halo-gradient);
   filter: blur(4rem);
-  opacity: 0.2;
-}
-
-[data-md-color-scheme="slate"] .pyprobs-hero::before {
-  opacity: 0.3;
+  opacity: var(--pyprobs-halo-opacity);
 }
 
 /* The title is only as wide as its text, so the gradient spans the words instead of the whole line. */
@@ -81,7 +84,7 @@ body {
   font-size: 3.2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: var(--pyprobs-gradient);
+  background: var(--pyprobs-title-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -106,7 +109,32 @@ body {
 }
 
 .md-typeset .grid.cards > ul > li {
-  transition: border-color 150ms, transform 150ms;
+  transition: border-color 150ms, box-shadow 150ms, transform 150ms;
+}
+
+/* In light mode the feature cards are frosted glass with a soft violet shadow, so they stand out from the glows. */
+[data-md-color-scheme="default"] .md-typeset .pyprobs-features > ul > li {
+  background-color: rgb(255 255 255 / 65%);
+  border-color: rgb(85 60 154 / 12%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.6rem 1.6rem rgb(78 59 148 / 8%);
+  backdrop-filter: blur(0.4rem);
+}
+
+[data-md-color-scheme="default"] .md-typeset .pyprobs-features > ul > li:hover {
+  box-shadow: 0 1px 2px rgb(42 54 120 / 8%), 0 0.8rem 2rem rgb(78 59 148 / 16%);
+}
+
+/* The install command and the second button get the same frosted look in light mode. */
+[data-md-color-scheme="default"] .md-typeset .pyprobs-hero + .highlight code {
+  background-color: rgb(255 255 255 / 65%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.6rem 1.6rem rgb(78 59 148 / 8%);
+  backdrop-filter: blur(0.4rem);
+}
+
+[data-md-color-scheme="default"] .md-typeset .pyprobs-hero .md-button:not(.md-button--primary) {
+  color: var(--pyprobs-link);
+  background-color: rgb(255 255 255 / 70%);
+  box-shadow: 0 1px 2px rgb(42 54 120 / 6%), 0 0.4rem 1rem rgb(78 59 148 / 10%);
 }
 
 .md-typeset .grid.cards > ul > li:hover {
@@ -126,7 +154,7 @@ body {
 
 .md-typeset h1 {
   width: fit-content;
-  background: var(--pyprobs-gradient);
+  background: var(--pyprobs-title-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
