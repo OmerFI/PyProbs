@@ -20,10 +20,7 @@ nav = [
 ]
 
 [project.theme]
-variant = "classic"
 favicon = "assets/favicon.svg"
-font.text = "Inter"
-font.code = "JetBrains Mono"
 features = [
     "content.code.copy",
     "content.tabs.link",

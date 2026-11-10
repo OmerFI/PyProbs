@@ -1,4 +1,5 @@
 ---
+icon: lucide/house
 hide:
   - navigation
   - toc

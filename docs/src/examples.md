@@ -1,3 +1,7 @@
+---
+icon: lucide/flask-conical
+---
+
 # Examples
 
 Short recipes for things people use PyProbs for. Each one assumes this import:
