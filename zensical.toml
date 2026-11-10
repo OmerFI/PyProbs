@@ -26,6 +26,7 @@ font.text = "Inter"
 font.code = "JetBrains Mono"
 features = [
     "content.code.copy",
+    "content.tabs.link",
     "navigation.footer",
     "search.highlight",
 ]
