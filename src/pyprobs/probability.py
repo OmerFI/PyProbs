@@ -1,4 +1,5 @@
 import random
+from fractions import Fraction
 from typing import Literal, TypedDict, overload
 
 from . import exceptions
@@ -22,14 +23,14 @@ class ConstantSettings(TypedDict):
     mutable: bool
 
 
-def _to_probability(value: ProbabilityValue) -> float:
+def _to_probability(value: ProbabilityValue) -> Fraction:
     """
-    Convert a probability given by the user into a float between 0 and 1.
+    Convert a probability given by the user into an exact fraction between 0 and 1.
 
     Every public function accepts the same three forms, so they all pass through here: an int (0 or 1), a float
     (0.25, 1e-05) or a str. A str can be a percentage ('25%', '%25', '12.5%'), a fraction ('1/4', ' 1 / 4 ') or a
-    plain number ('0.25'). Converting to float first lets one comparison against ``random.random()`` decide the
-    outcome, whatever form the probability was written in.
+    plain number ('0.25'). Keeping the probability as a Fraction instead of a float lets ``_draw()`` give '3/7' a
+    chance of exactly 3/7, rather than of the float closest to it.
 
     Args:
         value: The probability in one of the forms above.
@@ -39,12 +40,15 @@ def _to_probability(value: ProbabilityValue) -> float:
         ProbabilityRangeError: When the value is outside the 0-1 range, e.g. 2, '150%' or '3/2'.
 
     Returns:
-        float: The probability as a float between 0 and 1.
+        Fraction: The probability as a fraction between 0 and 1.
     """
     if isinstance(value, str):
         probability = _str_to_probability(value)
-    elif isinstance(value, (int, float)):
-        probability = float(value)
+    elif isinstance(value, float):
+        # repr gives the decimal the float prints as (0.1), while Fraction(0.1) gives its binary value (0.1000…0555).
+        probability = _str_to_probability(repr(value))
+    elif isinstance(value, int):
+        probability = Fraction(value)
     else:
         raise exceptions.ProbabilityTypeError("The probability must be int, float, or str.")
 
@@ -54,19 +58,19 @@ def _to_probability(value: ProbabilityValue) -> float:
     return probability
 
 
-def _str_to_probability(value: str) -> float:
-    """Read a percentage, fraction or plain number str as a float."""
+def _str_to_probability(value: str) -> Fraction:
+    """Read a percentage, fraction or plain number str as an exact Fraction."""
     if "%" in value and "/" in value:
         raise exceptions.ProbabilityTypeError("Given str value must contain either '%' or '/', not both.")
 
     try:
         if "%" in value:
-            probability = float(value.strip().strip("%")) / 100
+            probability = Fraction(value.strip().strip("%")) / 100
         elif "/" in value:
             numerator, denominator = value.split("/")
-            probability = float(numerator) / float(denominator)
+            probability = Fraction(numerator) / Fraction(denominator)
         else:
-            probability = float(value)
+            probability = Fraction(value)
     except (ValueError, ZeroDivisionError):
         raise exceptions.ProbabilityTypeError(
             f"{value!r} is not a valid probability. Use a percentage ('25%'), a fraction ('1/4') or a number ('0.25')."
@@ -98,11 +102,11 @@ def _validate_num(num: float) -> int:
     return int(num)
 
 
-def _draw(probability: float, num: int) -> list[bool]:
-    """Draw num independent outcomes, each True with the given probability."""
+def _draw(probability: Fraction, num: int) -> list[bool]:
+    """Draw num independent outcomes, each True when a whole number below the denominator falls under the numerator."""
     outcomes: list[bool] = []
     for _ in range(num):
-        outcomes.append(random.random() < probability)
+        outcomes.append(random.randrange(probability.denominator) < probability.numerator)
 
     return outcomes
 
@@ -123,9 +127,9 @@ class Probability:
         False
         >>> p = pr()
         >>> p.iprob("3/7", 0.25, num=2)
-        [[False, True], [False, False]]
+        [[False, False], [True, False]]
         >>> p.history
-        {'3/7': [False, True], 0.25: [False, False]}
+        {'3/7': [False, False], 0.25: [True, False]}
         >>> p.count_values("all")
         {True: 1, False: 3}
     """
@@ -143,7 +147,7 @@ class Probability:
         if self._constant == UNSET_CONSTANT:
             raise exceptions.ConstantError("The constant must be set before.")
 
-        return _to_probability(self._constant)
+        return float(_to_probability(self._constant))
 
     def __int__(self) -> int:
         return int(float(self))
@@ -155,8 +159,10 @@ class Probability:
         if self._constant == UNSET_CONSTANT or other._constant == UNSET_CONSTANT:
             raise exceptions.ConstantError("The objects' constants must be set before.")
 
+        total = _to_probability(self._constant) + _to_probability(other._constant)
+
         result = Probability()
-        result.set_constant(min(float(self) + float(other), 1), self._mutable or other._mutable)
+        result.set_constant(min(float(total), 1), self._mutable or other._mutable)
         return result
 
     def __eq__(self, other: object) -> bool:
@@ -171,7 +177,8 @@ class Probability:
         Draw `True` or `False` outcomes for one or more probabilities.
 
         Each outcome is `True` with the given probability, so `"25%"` gives `True` about one time in four. A
-        probability of `0` always gives `False` and `1` always gives `True`.
+        probability of `0` always gives `False` and `1` always gives `True`. The chance is exact, so write a
+        probability like one third as `"1/3"`: the float `1/3` is already rounded before it reaches PyProbs.
 
         Args:
             *args: The probabilities to draw for, written as an int (`0`, `1`), a float (`0.25`, `1e-05`) or a str
@@ -192,7 +199,7 @@ class Probability:
             >>> pr.prob(0.5)
             False
             >>> pr.prob("25%", num=5)
-            [False, False, False, False, False]
+            [False, True, False, False, False]
             >>> pr.prob(1, 0, num=2)
             [True, True, False, False]
         """
@@ -201,7 +208,7 @@ class Probability:
 
         num = _validate_num(num)
 
-        probabilities: list[float] = []
+        probabilities: list[Fraction] = []
         for arg in args:
             probabilities.append(_to_probability(arg))
 
@@ -249,7 +256,7 @@ class Probability:
 
             >>> p.set_constant(0.5)
             >>> p.iprob(num=3)
-            [True, False, True]
+            [False, False, False]
         """
         if args:
             values = list(args)
@@ -260,7 +267,7 @@ class Probability:
 
         num = _validate_num(num)
 
-        probabilities: list[float] = []
+        probabilities: list[Fraction] = []
         for value in values:
             probabilities.append(_to_probability(value))
 

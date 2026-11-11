@@ -25,7 +25,7 @@ did not drop:
 >>> for _ in range(5):
 ...     print(open_chest())
 gold coins
-silver ring
+gold coins
 gold coins
 gold coins
 gold coins
@@ -39,7 +39,7 @@ closer to the probability as the number of draws grows:
 ```pycon
 >>> outcomes = pr.prob("1/3", num=100_000)
 >>> sum(outcomes) / len(outcomes)
-0.33453
+0.33618
 ```
 
 ## Sampling a fraction of items
@@ -52,7 +52,7 @@ Keep roughly one item in ten, for example to log the details of a sample of requ
 ...     if pr.prob("10%"):
 ...         sampled.append(request_id)
 >>> sampled
-[19, 20]
+[11, 12, 22]
 ```
 
 ## Free throws with a fixed success rate
@@ -64,13 +64,13 @@ can stray quite far from 72%:
 >>> player = pr()
 >>> player.set_constant("72%")
 >>> player.iprob(num=10)
-[False, True, True, False, True, True, False, True, False, False]
+[True, True, True, True, True, True, False, False, True, False]
 >>> player.count_values()
-{True: 5, False: 5}
+{True: 7, False: 3}
 >>> player.iprob(num=10)
-[True, True, False, False, False, True, True, True, False, True]
+[False, True, False, True, False, False, True, True, False, True]
 >>> player.count_values("all")
-{True: 11, False: 9}
+{True: 12, False: 8}
 ```
 
 ## Stable outcomes in tests

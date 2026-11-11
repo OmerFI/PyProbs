@@ -57,10 +57,10 @@ once, draw many times in a single call, or keep an instance around that remember
 ```pycon
 >>> from pyprobs import Probability as pr
 >>> pr.prob("50%", num=5)
-[False, False, True, True, False]
+[False, False, True, False, False]
 >>> p = pr()
 >>> p.iprob("3/4", 0.5, num=2)
-[[True, False], [True, True]]
+[[False, True], [False, False]]
 >>> p.count_values("all")
-{True: 3, False: 1}
+{True: 1, False: 3}
 ```

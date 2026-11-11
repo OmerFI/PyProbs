@@ -80,6 +80,38 @@ def test_prob_frequency(test_input: ProbabilityValue, expected: float) -> None:
     assert sum(values) / len(values) == pytest.approx(expected, abs=0.02)
 
 
+@pytest.mark.parametrize(
+    "test_input,denominator,true_count",
+    [
+        ("3/7", 7, 3),
+        (" 3 / 7 ", 7, 3),
+        ("1.5/3", 2, 1),
+        ("0.1", 10, 1),
+        (0.1, 10, 1),
+        ("12.5%", 8, 1),
+        ("%69", 100, 69),
+        (1e-05, 100_000, 1),
+    ],
+)
+def test_prob_is_exact(
+    test_input: ProbabilityValue, denominator: int, true_count: int, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Hand out every whole number below the denominator once, so the True count is the exact numerator.
+    draws = iter(range(denominator))
+    stops: list[int] = []
+
+    def randrange(stop: int) -> int:
+        stops.append(stop)
+        return next(draws)
+
+    monkeypatch.setattr(random, "randrange", randrange)
+    values = pr.prob(test_input, num=denominator)
+
+    assert isinstance(values, list)
+    assert set(stops) == {denominator}
+    assert sum(values) == true_count
+
+
 def test_prob_multiple_args_returns_flat_list() -> None:
     assert pr.prob(1, 0, num=2) == [True, True, False, False]
 
@@ -242,6 +274,12 @@ def test_dunder_methods() -> None:
     same = pr()
     same.set_constant("50%")
     assert p == same
+
+    tenth = pr()
+    tenth.set_constant(0.1)
+    fifth = pr()
+    fifth.set_constant(0.2)
+    assert (tenth + fifth).get("constant") == 0.3
 
 
 def test_add_errors() -> None:
