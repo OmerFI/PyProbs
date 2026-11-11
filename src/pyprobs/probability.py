@@ -272,6 +272,9 @@ class Probability:
             >>> p.set_constant(0.5)
             >>> p.iprob(num=3)
             [False, False, False]
+
+            You can also set a str constant, e.g. `"50%"` or `"3/11"`. For more accurate results, give fractions
+            as str.
         """
         if args:
             values = list(args)
