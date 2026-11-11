@@ -1,4 +1,5 @@
 import random
+import re
 from fractions import Fraction
 from typing import Literal, TypedDict, overload
 
@@ -8,6 +9,10 @@ ProbabilityValue = int | float | str
 """A probability written as an int (`0`, `1`), a float (`0.25`) or a str (`"25%"`, `"1/4"`, `"0.25"`)."""
 
 UNSET_CONSTANT = "unset"
+
+# Fraction turns the exponent of '1e-1000000000' into a denominator with that many digits, so the exponent gets the
+# same 4300 cap that Python puts on the digits of an int str.
+MAX_EXPONENT = 4300
 
 
 class ConstantSettings(TypedDict):
@@ -65,18 +70,28 @@ def _str_to_probability(value: str) -> Fraction:
 
     try:
         if "%" in value:
-            probability = Fraction(value.strip().strip("%")) / 100
+            probability = _to_fraction(value.strip().strip("%")) / 100
         elif "/" in value:
             numerator, denominator = value.split("/")
-            probability = Fraction(numerator) / Fraction(denominator)
+            probability = _to_fraction(numerator) / _to_fraction(denominator)
         else:
-            probability = Fraction(value)
+            probability = _to_fraction(value)
     except (ValueError, ZeroDivisionError):
         raise exceptions.ProbabilityTypeError(
             f"{value!r} is not a valid probability. Use a percentage ('25%'), a fraction ('1/4') or a number ('0.25')."
         ) from None
 
     return probability
+
+
+def _to_fraction(text: str) -> Fraction:
+    """Read a number str as a Fraction, refusing an exponent large enough to make building it hang."""
+    exponent = re.search(r"e([+-]?[\d_]+)", text, re.IGNORECASE)
+    if exponent is not None and abs(int(exponent[1])) > MAX_EXPONENT:
+        raise exceptions.ProbabilityTypeError(f"{text.strip()!r} has an exponent beyond {MAX_EXPONENT}.")
+
+    number = Fraction(text)
+    return number
 
 
 def _normalize(value: ProbabilityValue) -> ProbabilityValue:

@@ -21,6 +21,7 @@ from pyprobs.probability import ConstantSettings, ProbabilityValue
         ("12.5%", [True, False]),
         ("%69", [True, False]),
         ("% 69", [True, False]),
+        ("1e-300", [True, False]),
     ],
 )
 def test_prob_in(test_input: ProbabilityValue, expected: list[bool]) -> None:
@@ -122,7 +123,22 @@ def test_prob_out_of_range(test_input: ProbabilityValue) -> None:
         pr.prob(test_input)
 
 
-@pytest.mark.parametrize("test_input", [None, [0.5], "abc", "50%/2", "1/0", "1/2/3"])
+@pytest.mark.parametrize(
+    "test_input",
+    [
+        None,
+        [0.5],
+        "abc",
+        "50%/2",
+        "1/0",
+        "1/2/3",
+        "1e-1000000000",
+        "1E+1000000000",
+        "1e-1_000_000_000",
+        "1/1e1000000000",
+        "1e-1000000000%",
+    ],
+)
 def test_prob_invalid_value(test_input: Any) -> None:
     with pytest.raises(exceptions.ProbabilityTypeError):
         pr.prob(test_input)
