@@ -21,11 +21,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          # The package version is read from the release tag.
-          fetch-depth: 0
       - name: Install uv
         uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      # The version comes from pyproject.toml, so a tag that does not match it would publish the wrong version.
+      - name: Check the release tag matches the project version
+        run: |
+          version=$(uv version --short --frozen)
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::The release tag is $GITHUB_REF_NAME but pyproject.toml says $version. Run 'uv version $GITHUB_REF_NAME', merge it and release again."
+            exit 1
+          fi
       - name: Build package
         run: uv build
       - name: Publish to PyPI

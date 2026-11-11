@@ -691,6 +691,7 @@ wheels = [
 
 [[package]]
 name = "pyprobs"
+version = "1.2.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
