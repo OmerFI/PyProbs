@@ -22,7 +22,7 @@ Pass `num` to draw several outcomes at once. They come back as a list:
 
 ```pycon
 >>> pr.prob("50%", num=8)
-[False, True, True, False, True, False, True, True]
+[False, True, False, False, False, False, False, False]
 ```
 
 When you pass more than one probability, the outcomes of all of them are returned in one flat list, in order:
@@ -47,6 +47,12 @@ Every function accepts the same forms, so write a probability whichever way read
 | Percentage | `"25%"`, `"%12.5"`   | The sign can be on either side, decimals are fine.    |
 | Fraction   | `"1/4"`, `" 3 / 7 "` | Spaces around the numbers are ignored.                |
 | Number     | `"0.25"`             | A number written as a str works like the float.       |
+
+!!! note "Probabilities are exact"
+
+    PyProbs keeps every probability as an exact fraction, so `"3/7"` comes out `True` with a chance of exactly 3 in
+    7. A float counts as the decimal it prints as, so `0.1` is exactly one in ten. One third has no such decimal, so
+    write it as `"1/3"`: the float `1/3` is already rounded to `0.3333333333333333` before PyProbs sees it.
 
 A value outside the 0 to 1 range raises `ProbabilityRangeError`:
 
@@ -74,9 +80,9 @@ records every outcome in `history`, under the probability it was drawn for:
 ```pycon
 >>> p = pr()
 >>> p.iprob("3/4", 0.5, num=2)
-[[False, True], [True, False]]
+[[True, True], [True, False]]
 >>> p.history
-{'3/4': [False, True], 0.5: [True, False]}
+{'3/4': [True, True], 0.5: [True, False]}
 ```
 
 Unlike `prob()`, `iprob()` keeps the outcomes of each probability apart:
@@ -92,18 +98,18 @@ it, so `" 3 / 4 "` and `"3/4"` share one entry:
 
 ```pycon
 >>> p.iprob(" 3 / 4 ", num=4)
-[False, False, False, True]
+[True, True, True, False]
 >>> p.history["3/4"]
-[False, True, False, False, False, True]
+[True, True, True, True, True, False]
 ```
 
 `count_values()` counts the outcomes of the last `iprob()` call, or of the whole history with `"all"`:
 
 ```pycon
 >>> p.count_values()
-{True: 1, False: 3}
+{True: 3, False: 1}
 >>> p.count_values("all")
-{True: 3, False: 5}
+{True: 6, False: 2}
 ```
 
 `clear()` empties the history:
@@ -123,7 +129,7 @@ arguments. A probability you pass to `iprob()` still takes precedence:
 >>> coin = pr()
 >>> coin.set_constant("50%")
 >>> coin.iprob(num=4)
-[False, False, False, True]
+[True, False, False, False]
 >>> coin.iprob(0)
 False
 ```
@@ -215,10 +221,10 @@ outcomes repeat. This is handy in tests and in simulations you want to rerun:
 >>> import random
 >>> random.seed(42)
 >>> pr.prob("50%", num=5)
-[False, True, True, True, False]
+[True, True, False, True, True]
 >>> random.seed(42)
 >>> pr.prob("50%", num=5)
-[False, True, True, True, False]
+[True, True, False, True, True]
 ```
 
 !!! danger "Not for security"

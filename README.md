@@ -51,7 +51,7 @@ $ pip install pyprobs
 >>> pr.prob(0.5)
 False
 >>> pr.prob("50%", num=5)
-[False, True, True, False, True]
+[False, True, False, False, False]
 >>> pr.prob(1, 0)  # Several probabilities return one flat list
 [True, False]
 ```
@@ -61,11 +61,11 @@ False
 ```pycon
 >>> p = pr()
 >>> p.iprob("3/4", 0.5, num=2)
-[[True, True], [False, False]]
+[[True, True], [True, False]]
 >>> p.history
-{'3/4': [True, True], 0.5: [False, False]}
+{'3/4': [True, True], 0.5: [True, False]}
 >>> p.count_values("all")
-{True: 2, False: 2}
+{True: 3, False: 1}
 ```
 
 ### Set a constant
